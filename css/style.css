@@ -215,8 +215,27 @@ div.title{
 }
 
 
-div.action {
-  	margin-top:1em;
+.action {
+	padding:0.3em 0.3em;
+	font-weight:bold;
+	color:#6eb4ee;
+	border-style:solid;
+	border-width:2px;
+  border-color:red;
+  background:#eeeeee;
+ 	margin-top:1em;
+	float: left; 
+}
+
+.action:hover {
+  background:red;
+}
+.action a{
+	text-decoration: none;
+	display:block;
+}
+.action a:hover{
+	text-decoration: none;
 }
 
 hr.pagebreak {

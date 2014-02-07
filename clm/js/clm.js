@@ -704,7 +704,7 @@ function formatTable(o) {
 				break;
 			}
 		}
-		result += "<div class='nav action'><a href='?t="+kind+"&m=new'>Добавить</a></div>";
+		result += "<div class='action'><a href='?t="+kind+"&m=new'>Добавить</a></div>";
 	}
 	return result;
 }
