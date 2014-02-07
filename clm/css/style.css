@@ -180,7 +180,7 @@ div.title{
 	border-style:solid;
 	border-width:2px;
   border-color:#6eb4ee;
-  background:#eeeeee;
+  background:white;
 }
 .nav > li {
 	list-style:none;
@@ -210,10 +210,14 @@ div.title{
 	display:block;
 }
 .nav li a{
+	color:#555;
 	text-decoration: none;
 	display:block;
 }
 
+.nav li:hover > a{
+	color:black;
+}
 
 .action {
 	padding:0.3em 0.3em;
@@ -222,7 +226,7 @@ div.title{
 	border-style:solid;
 	border-width:2px;
   border-color:red;
-  background:#eeeeee;
+  background:white;
  	margin-top:1em;
 	float: left; 
 }
@@ -230,8 +234,12 @@ div.title{
 .action:hover {
   background:red;
 }
+.action:hover > a{
+	color:black;
+}
 .action a{
 	text-decoration: none;
+	color:black;
 	display:block;
 }
 .action a:hover{

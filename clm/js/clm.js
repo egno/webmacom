@@ -274,7 +274,7 @@ function formatTable(o) {
 			}
 		}
 
-		result += '<input onclick="saveData()" type="button" value="Сохранить" /> ';
+		result += '<input class="action" onclick="saveData()" type="button" value="Сохранить" /> ';
 //		result += '<input onclick="saveCopy()" type="button" value="Сохранить как новый" />';
 		result = result + '</div>';
 
