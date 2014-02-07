@@ -45,13 +45,13 @@ function setDt(date){
 			if ( isFinite(temp_dt.getYear()) && isFinite(temp_dt.getMonth()) && isFinite(temp_dt.getDate()) ) {
 				dt=temp_dt;
 				set_cookie("workdate", dt.toDbFormat());
-				document.getElementById('status').innerHTML='Установлена расчётная дата: '+dt.toDbFormat('-');
+				showStatus('Установлена расчётная дата: '+dt.toDbFormat('-'));
 			}
 		}
 }
 
 function showStatus(txt){
-	document.getElementById('status').innerHTML=txt;
+	document.getElementById('status').innerHTML=nvl(txt,'&nbsp;','');
 }
 
 function showStatusAndRefresh(txt){
@@ -69,7 +69,7 @@ function showList(m){
 function getData(o) {
   var cont = document.getElementById('contentBody');  
 	try { 
-				document.getElementById("status").innerHTML = ""; 
+				showStatus(); 
 				cont.innerHTML = formatTable(o);  
 	} catch(e4){alert("Ошибка доступа к содержимому страницы: \n" + e4.name + ": " + e4.message);}
 }
@@ -84,63 +84,21 @@ function checkSave(o){
 }
 
 function saveData(fnew){
-//	document.getElementById("buttonSave").value="Ждите. Идёт сохранение данных";
-
 	var surl;
 	var o = new Object();
 	var div = document.getElementById('contentBody');
 	var elems = div.getElementsByClassName('jsobj');
 	var labels = div.getElementsByTagName ('label');
+	var inputs = div.getElementsByTagName ('input');
+	var selects = div.getElementsByTagName ('select');
 	var el;
 	var d;
 	var nm;
+	var val;
 	var ar = new Array;
 
 	if(!(kind.substring(0,2)=="f_")){
 		switch (kind.substring(0,2)) {
-			case "q_":  
-				o[kind]=new Array;
-				for(var i=0; i<elems.length; i++){
-					el=document.getElementById(elems[i].id);
-					var oel = new Object();
-					for (key in labels) {
-						if (labels.hasOwnProperty(key)) {
-							if (labels[key].htmlFor == el.id){
-								nm=labels[key].attributes['name'].nodeValue;
-								if (!(nm == 'id' && (labels[key].id == 'null'))) {
-									oel[nm]=labels[key].id;
-								};
-							};
-						};
-					};
-					oel[el.name]=el.value
-					o[kind].push(oel);
-				};
-				break;
-	/*		case "f_":  
-				var table = kind.substring(2,255);
-				o[table]=new Array;
-				for(var i=0; i<elems.length; i++){
-					el=document.getElementById(elems[i].id);
-					var oel = new Object();
-					for (key in labels) {
-						if (labels.hasOwnProperty(key)) {
-							if (labels[key].htmlFor == el.id){
-								var nm=labels[key].attributes['name'].nodeValue;
-								var val=labels[key].attributes['value'].nodeValue;
-								if (!(nm == 'id' && val == 'null')) {
-									oel[nm]=val;
-								};
-							};
-						};
-					};
-					oel[el.name]=el.value;
-	//				if (!(oel.amount=='')) {
-						o[table].push(oel);	
-	//				};
-				};
-				break;
-	*/
 			case "i_":  
 				var oel = new Object();
 				for(var i=0; i<elems.length; i++){
@@ -151,18 +109,57 @@ function saveData(fnew){
 				};
 				o[kind]=Array(oel);
 				break;
-			default:
-				var oel = new Object();
+			default: {
+				o[kind]=new Array;
 				for(var i=0; i<elems.length; i++){
-					el=document.getElementById(elems[i].id);
-					if (!( (el.id == 'id') && ((mode == 'new') || (el.value == '')) )) {
-						oel[elems[i].id]=el.value;
+					if (elems[i].attributes['name']) {
+						var oel = new Object();
+						for (key in labels) {
+							if (labels.hasOwnProperty(key)) {
+								if (labels[key].htmlFor == elems[i].id && (labels[key].attributes['name']) && (labels[key].attributes['value'])){
+									nm=labels[key].attributes['name'].nodeValue;
+									val=labels[key].attributes['value'].nodeValue;
+									if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+										oel[nm]=val;
+									};
+								};
+							};
+						};
+						for (key in inputs) {
+							if (inputs.hasOwnProperty(key)) {
+								if ((inputs[key].attributes['for']) && (inputs[key].attributes['for'].nodeValue == elems[i].id) && (inputs[key].attributes['name']) && (inputs[key].attributes['value'])){
+									nm=inputs[key].attributes['name'].nodeValue;
+									val=inputs[key].value;
+									if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+										oel[nm]=val;
+									};
+								};
+							};
+						};
+						for (key in selects) {
+							if (selects.hasOwnProperty(key)) {
+								if ((selects[key].attributes['for']) && (selects[key].attributes['for'].nodeValue == elems[i].id) && (selects[key].attributes['name'])){
+									nm=selects[key].attributes['name'].nodeValue;
+									val=selects[key].value;
+									if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+										oel[nm]=val;
+									};
+								};
+							};
+						};
+						nm=elems[i].attributes['name'].nodeValue;
+						val=elems[i].value;
+						if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+							oel[elems[i].attributes['name'].nodeValue]=elems[i].value
+						};
+						o[kind].push(oel);
 					};
 				};
-				o[kind]=Array(oel);
+			};
 		};	
 		d=JSON.stringify(o);
-
+	
+//		alert(d);
 		var ai = new AJAXInteraction('s', checkSave);
 		ai.doPost(d);
 	}

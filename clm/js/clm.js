@@ -122,7 +122,7 @@ function tryGetData(url, id, rel){
 		cont.innerHTML = formatTable(o);
 	}
 	else {
-		document.getElementById("status").innerHTML = "Данные загружаются";
+		showStatus("Данные загружаются");
 		makeRequest(lurl, getData);
 	}
 }
@@ -132,20 +132,39 @@ function saveCopy(){
 	saveData('new');
 }
 
-function tdCar(id, disp, href, title){
+function tdDriver(id, disp, href, title){
 	var res = "";		
 	if (id == null) {	
 		return '<td>-</td>';
 	};
-	res += "<td class='left expanded'>";
+	res += "<td class='left printsmall expanded'>";
 	if (href){
 		res += hrefnvl(disp,href,undefined,title); 
 	} else {
 		res += disp;
 	}
 	res += "<div class='full'>";
-	res += '<a href="?t=w_cars&m=edit&id='+id+'" title="Редактировать"><img src="img/edit.svg" alt="Редактировать"/></a>';
-	res += '<a href="?t=q_car_norms&m=edit&r=car&id='+id+'" title="Нормы"><img src="img/settings.svg" alt="Нормы"/></a>';
+	res += '<a href="?t=w_waybills&r=driver&id='+id+'" title="Путевые листы водителя: '+disp+'"><img src="img/tasks.svg" alt="Путевые листы"/></a>';
+	res += "</div>";
+	res += "</td>";
+	return res;
+};
+
+function tdCar(id, disp, href, title){
+	var res = "";		
+	if (id == null) {	
+		return '<td>-</td>';
+	};
+	res += "<td class='left printsmall expanded'>";
+	if (href){
+		res += hrefnvl(disp,href,undefined,title); 
+	} else {
+		res += disp;
+	}
+	res += "<div class='full'>";
+	res += '<a href="?t=w_cars&m=edit&id='+id+'" title="Редактировать т/с: '+disp+'"><img src="img/edit.svg" alt="Редактировать"/></a>';
+	res += '<a href="?t=q_car_norms&m=edit&r=car&id='+id+'" title="Нормы т/с: '+disp+'"><img src="img/settings.svg" alt="Нормы"/></a>';
+	res += '<a href="?t=w_waybills&r=car&id='+id+'" title="Путевые листы т/с: '+disp+'"><img src="img/tasks.svg" alt="Путевые листы"/></a>';
 	res += "</div>";
 	res += "</td>";
 	return res;
@@ -159,7 +178,7 @@ function formatTable(o) {
 	function genRow(nm, type, code, list, val){
 		var res;
 		res = "<tr><td class='left'>";		
-		res+="<label for='"+code+"'>"+nm+"</label>";
+		res+="<label for='"+id+code+"'>"+nm+"</label>";
 		res+="</td><td>";
 		if (val === undefined){ 
 			if (o[0][code] === undefined) { o[0][code] = '';};
@@ -170,12 +189,12 @@ function formatTable(o) {
 			case "date":
 			case "number":
 			{
-				res+="<input class='jsobj' id='"+code+"' type='"+type+"' value='"+ val +"'/>";
+				res+="<input for='"+id+"' id='"+id+code+"' type='"+type+"' name='"+code+"' value='"+ val +"'/>";
 				break;
 			}
 			case "list": {
-				res+="<select class='jsobj' id='"+code+"'><option value='"+val+"'/>"+ o[0][code+'_disp'] +"</option></select></td></tr>";
-				fillSelect(code, list, val);
+				res+="<select for='"+id+"' id='"+id+code+"' name='"+code+"'><option value='"+val+"'/>"+ o[0][code+'_disp'] +"</option></select></td></tr>";
+				fillSelect(id+code, list, val);
 				break;
 			}
 		}
@@ -195,8 +214,8 @@ function formatTable(o) {
 				} else {
 					document.getElementById("mode").innerHTML = "<a href=?t="+kind+">Путевой лист</a>: #"+o[0].num; 
 				};
-				result += "<div class='input'><table><tbody>";
-				result = result + "<input class='jsobj' name='editdata' id='id' type='hidden' value='"+ o[0].id +"'/>";
+				result += "<input class='jsobj' id='"+o[0].id+"' type='hidden' name='id' value='"+o[0].id+"' />";
+				result += "<table><tbody>";
 				result = result + "<tr>";
 				result = result + "<th>Наименование</th>";
 				result = result + "<th>Значение</th>";
@@ -226,7 +245,8 @@ function formatTable(o) {
 				} else {
 					document.getElementById("mode").innerHTML = "<a href=?t="+kind+">Автомобиль</a>: #"+o[0].disp; 
 				}
-				result += "<div class='input'><table><tbody>";
+				result += "<input class='jsobj' id='"+id+"' type='hidden' name='id' value='"+id+"' />";
+				result += "<table><tbody>";
 				result = result + "<tr>";
 				result = result + "<th>Наименование</th>";
 				result = result + "<th>Значение</th>";
@@ -238,7 +258,7 @@ function formatTable(o) {
 			}
 			case "q_car_norms": {
 				document.getElementById("mode").innerHTML = "Нормы"; 
-				result += "<div class='input'><table><tbody>";
+				result += "<table><tbody>";
 				result = result + "<tr>";
 				result = result + "<th>Автомобиль</th>";
 				result = result + "<th>Норма</th>";
@@ -249,7 +269,11 @@ function formatTable(o) {
 						result+= "<tr>";
 						result += tdCar(o[key].car, o[key].car_disp, "?t="+kind+"&m=edit&r=car&id="+o[key].car);
 						result+= "<td class='left'><a href='?t="+kind+"&m=edit&r=kind&id="+o[key].kind+"'>"+o[key].kind_disp+"</a></td>";
-						result+= "<td><label name='car' id='"+o[key].car+"' for='"+o[key].car+o[key].kind+"'></label><label name='id' type='hidden' id='"+ o[key].id +"' for='"+o[key].car+o[key].kind+"'/><label name='kind' id='"+o[key].kind+"' for='"+o[key].car+o[key].kind+"'></label><input class='jsobj' name='val' id='"+o[key].car+o[key].kind+"' type='number' value='"+ o[key].val +"'/></td></tr>";
+						result+= "<td>";
+						result += "<label type='hidden' name='car' value='"+o[key].car+"' for='"+o[key].car+o[key].kind+"'></label>";
+						result += "<label type='hidden' name='id' value='"+ o[key].id +"' for='"+o[key].car+o[key].kind+"'></label>";
+						result += "<label type='hidden' name='kind' value='"+o[key].kind+"' for='"+o[key].car+o[key].kind+"'></label>";
+						result += "<input class='jsobj' name='val' id='"+o[key].car+o[key].kind+"' type='number' value='"+ o[key].val +"'/></td></tr>";
 					};
 				};
 				result = result + "</tbody></table>";
@@ -261,8 +285,8 @@ function formatTable(o) {
 				} else {
 					document.getElementById("mode").innerHTML = "<a href=?t="+kind+">Приказ о смене сезона</a>: c "+o[0].dt; 
 				};
-				result += "<div class='input'><table><tbody>";
-				result = result + "<input class='jsobj' name='editdata' id='id' type='hidden' value='"+ o[0].id +"'/>";
+				result += "<input class='jsobj' id='"+id+"' type='hidden' name='id' value='"+id+"' />";
+				result += "<table><tbody>";
 				result = result + "<tr>";
 				result = result + "<th>Наименование</th>";
 				result = result + "<th>Значение</th>";
@@ -275,8 +299,6 @@ function formatTable(o) {
 		}
 
 		result += '<input class="action" onclick="saveData()" type="button" value="Сохранить" /> ';
-//		result += '<input onclick="saveCopy()" type="button" value="Сохранить как новый" />';
-		result = result + '</div>';
 
 	} else {
 		switch (kind) {
@@ -319,7 +341,7 @@ function formatTable(o) {
 						result = result + "<tr>";
 						result = result + "<td class='expanded'><a href='?t="+kind+"&m=edit&id="+o[key].id+"' title='Редактировать ПЛ №" + o[key].num_disp + "'>" + o[key].num_disp + "</a><div class='full'><a href='?t="+kind+"&m=edit&id="+o[key].id+"'><img src='img/edit.svg' alt='Редактировать' title='Редактировать ПЛ №" + o[key].num_disp + "' /></a> <a href='?t="+kind+"&m=new&id="+o[key].id+"'><img src='img/copy.svg' alt='Копировать' title='Копировать ПЛ №" + o[key].num_disp + "' /></a> <a href='/r/"+o[key].printform+"?t=clm."+kind+"&id="+o[key].id+"'><img src='img/ssheet.svg' alt='Печать' title='Печать ПЛ №" + o[key].num_disp + "' /></a></div></td>";
 						result = result + "<td><a href='?t="+kind+"&r=dt&id="+o[key].dt+"' title='Смотреть все по дате: "+ o[key].dt + "'>"+ o[key].dt + "</a></td>"; 
-						result = result + "<td class='left'><a href='?t="+kind+"&r=driver&id="+o[key].driver+"' title='Смотреть все по водителю: "+ o[key].driver_disp + "'>" + o[key].driver_disp + "</a></td>";
+						result += tdDriver(o[key].driver, o[key].driver_disp, "?t="+kind+"&r=driver&id="+o[key].driver+"' title='Смотреть все по водителю: "+ o[key].driver_disp);
 						result += tdCar(o[key].car, o[key].car_disp, "?t="+kind+"&r=car&id="+o[key].car,  'Смотреть все по автомобилю: '+ o[key].car_disp);
 						result = result + "<td class='left'></a><a href='?t="+kind+"&r=workplace&id="+o[key].workplace+"' title='Смотреть все по месту работы: "+ o[key].workplace_disp + "'>" + o[key].workplace_disp + "</td>";
 						result = result + "<td class='left'><a href='?t="+kind+"&r=service&id="+o[key].service+"' title='Смотреть все по виду работы: "+ o[key].service_disp + "'>" + o[key].service_disp + "</td>";
@@ -483,7 +505,7 @@ function formatTable(o) {
 				for (key in o) {
 					if (o.hasOwnProperty(key)) {
 						result = result + "<tr>";
-						result = result + "<td class='left'>" + o[key].disp + "</td>";
+						result += tdDriver(o[key].id, o[key].disp);
 						result = result + "<td class='left'>" + o[key].position_disp + "</td>";
 						result = result + "</tr>";
 					}
@@ -522,7 +544,7 @@ function formatTable(o) {
 				for (key in o) {
 					if (o.hasOwnProperty(key)) {
 						result = result + "<tr>";
-						result = result + "<td class='left printsmall'>" + hrefnvl(o[key].driver_disp,"?t="+kind+"&ym="+ym+"&w=driver=$$"+o[key].driver+"$$",undefined, 'Смотреть все по водителю: '+ o[key].driver_disp) + "</td>";
+						result += tdDriver(o[key].driver, o[key].driver_disp, "?t="+kind+"&ym="+ym+"&w=driver=$$"+o[key].driver+"$$",'Смотреть все по водителю: '+ o[key].driver_disp);
 						result = result + "<td class='left printsmall'>" + nvl(o[key].position_disp,'-') + "</td>";
 						result += tdCar(o[key].car, o[key].car_disp, "?t="+kind+"&ym="+ym+"&w=car=$$"+o[key].car+"$$",'Смотреть все по автомобилю: '+ o[key].car_disp);
 						result = result + "<td>" + hrefnvl(o[key].days_total, "?t=w_waybills&ym="+ym+"&w=car=$$"+o[key].car+"$$ and driver=$$"+o[key].driver+"$$", 0, 'Открыть путевые листы') + "</td>";
