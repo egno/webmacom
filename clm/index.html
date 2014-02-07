@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>УК Жилищник</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/clm.css" />
+	<script src="js/cookie.js"></script>
+	<script src="js/date.js"></script>
+	<script src="js/ajax.js"></script>
+	<script src="js/format.js"></script>
+	<script src="js/tools.js"></script>
+	<script src="js/editdropdown.js"></script>
+	<script src="js/app_common.js"></script>
+	<script src="js/clm.js"></script>
+	<script src="js/app.js"></script>
+</head>
+<body onload="init();">
+
+<div class="title">
+	<div id='header' class="header"></div> 
+	<div id="param">&nbsp;</div>
+</div>
+	<div id="nav" class="nav"></div>
+ <div class="status">
+  <span id="status">&nbsp;</span>
+ </div>
+ <div id="attention" class="attention"></div>
+	 
+    <div id="contentBody">  
+		<h2><a href='http://192.168.0.99'>УК Жилищник</a></h2>
+		<h3 id="app_name"></h3>
+<hr>
+		<p>
+Александр Шелеметьев<br>
+инженер-программист<br><br>
+ 
+ООО "УК "Жилищник"<br>
+<a href="http://kem-uk.ru">kem-uk.ru</a><br>
+<a href="http://ук-жилищник.рф">ук-жилищник.рф</a><br>
+<a href="mailto:siteadmin@kem-uk.ru">siteadmin@kem-uk.ru</a><br>
+<a href="mailto:siteadmin@ук-жилищник.рф">siteadmin@ук-жилищник.рф</a><br>
+тел.: 8 (3842) 31-93-04, внутренний: 120<br>
+моб.: +7 (904) 991-5035</p>
+<hr>
+		<h4>Последние изменения</h4>
+			<div class="scrollbox">
+			<h5>07.02.2014</h5>
+			<ul>
+				<li>Ввод остатков на начало учёта не анализируется на наличие ошибок.
+			</ul>
+			<h5>06.02.2014</h5>
+			<ul>
+				<li>Исправлена ошибка при сохранении нового автомобиля.
+				<li>Норма на холостой ход указывается в процентах, а не в литрах.
+				<li>В нормах добавлен параметр "Дежурная". Если указать 1, то учёт будет вестись без разбиения по водителям.
+			</ul>
+			<h5>05.02.2014</h5>
+			<ul>
+				<li>Добавлены отчёты "Справка о тоннокилометрах".
+				<li>Все отчётные формы теперь в режиме "Отчёты".
+			</ul>
+			<h5>04.02.2014</h5>
+			<ul>
+				<li>Если возникает ошибка при сохранении документа, появляется окно с сообщением.
+			</ul>
+			<h5>03.02.2014</h5>
+			<ul>
+				<li>Добавлен отчёт "Карточка учёта первичных документов".
+				<li>В документе "Путевой лист" если не указан фактический расход, то он считаеся автоматически по нормам.
+			</ul>
+			<h5>31.01.2014</h5>
+			<ul>
+				<li>Добавлена возможность копирования путевого листа.
+				<li>Добавлено оповещение о некорректных данных.
+			</ul>
+			<h5>30.01.2014</h5>
+			<ul>
+				<li>Добавлена Справка о затратах на выполнение работ по подразделениям
+				<li>Добавлен отчёт по учёту рабочего времени.
+			</ul>
+			<h5>29.01.2014</h5>
+			<ul>
+				<li>Добавлены скрытые кнопки у автомобилей и путевых листов. Для редактирования, выбора нормативов и т.д. нужно навести указатель маши на автомобиль. Кнопки отобразятся.
+				<li>Добавлен норматив "Стоимость машиночаса"
+			</ul>
+			</div>
+    </div>  
+    <div id="debug">  
+		<p></p>
+    </div>  
+ 
+  
+</body>
+</html>
