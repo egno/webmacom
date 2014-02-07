@@ -59,6 +59,10 @@ td{
 		vertical-align:top;
 }
 
+td > a{
+	display:block;
+}
+
 a img{
 	opacity: 0.5;
 }
@@ -155,28 +159,61 @@ div.title{
     padding: 0.5em 1em 0.5em;
     margin-bottom:0.5em;
 }
-.nav{
-	font-size: 0.7em;
-  	margin-bottom:1em;
-    border-color:#88f;
-}
 
-.nav a{
-	margin: 0.3em 0.2em;
+/* Навигация */
+#nav {
+	font-size: 0.7em;
+	padding: 1px;
+	height:3em;
+}
+.nav{
+	font-size: 0.95em;
+	padding:0;
+ 	margin:0;
+  border-color:#6eb4ee;
+}
+.nav li{
+  margin: -2px -1px;
 	padding:0.3em 0.3em;
 	font-weight:bold;
-	color:#747474;
+	color:#6eb4ee;
 	border-style:solid;
 	border-width:2px;
-    border-color:#aaf;
-/*	border-radius:0.5em; */
+  border-color:#6eb4ee;
+  background:#eeeeee;
 }
-.nav a:hover{
-    background:#6eb4ee;
-    border-color:transparent;
+.nav > li {
+	list-style:none;
+}
+#nav > .nav > li {
+  float:left;
+}
+.nav > li ul {
+	padding-top:0.5em;
+	display:none;
+  position:absolute;
+	z-index:100;
+}
+.nav > li > ul {
+	margin-left:0;
+}
+.nav > li > ul > li > ul{
+	width:100%;
+	margin:-2em 80%; 
+}
+.nav li:hover{
+  background:#6eb4ee;
+  border-color:transparent;
 	color:#000;
-	text-decoration: none;
 }
+.nav > li:hover > ul {
+	display:block;
+}
+.nav li a{
+	text-decoration: none;
+	display:block;
+}
+
 
 div.action {
   	margin-top:1em;

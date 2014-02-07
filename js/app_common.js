@@ -23,11 +23,20 @@ function init(){
 }
 
 function showMenu() {
-	var res='';
-	for(var i=0; i<appNav.length; i++){
-		res += '<a href="'+appNav[i][1]+'">'+appNav[i][0]+'</a>';
-	}
-	getObj('nav').innerHTML=res;
+
+	function calcArray(arr){
+		var res='';
+		for(var i=0; i<arr.length; i++){
+			if (Array.isArray(arr[i][1])) {
+				res += '<li><a href="#">'+arr[i][0]+'</a>'+calcArray(arr[i][1])+'</li>';
+			} else {
+				res += '<li><a href="'+arr[i][1]+'">'+arr[i][0]+'</a></li>';
+			}
+		};
+		return '<ul class="nav">'+ res+ '</ul>';
+	};
+	
+	getObj('nav').innerHTML=calcArray(appNav);
 }
 
 function setDt(date){

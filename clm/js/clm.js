@@ -1,20 +1,30 @@
 var appCaption="Учёт ГСМ";
-var appNav=[['На главную','.'],
-	['Контроль','?t=alerts&o=table_disp,disp'],
+var appNav=
+[
+	['На главную','.'],
 	['Путевые листы','?t=w_waybills'],
-	['Сезоны','?t=w_season_dates'],
-	['Автомобили','?t=w_cars'],
-//	['Водители','?t=drivers'],
-	['Отчёты','?t=modReports']
+	['Справочники',
+		[
+			['Сезоны','?t=w_season_dates'],
+			['Автомобили','?t=w_cars'],
+			['Водители','?t=drivers'],
+		]
+	],
+	['Контроль','?t=alerts'],
+	['Отчёты', 
+		[
+			['Карточка первичных документов','?t=w_waybill_card'],
+			['Учёт рабочего времени','?t=driver_worktime_month'],
+			['Справка о затратах','?t=costs_month'],
+			['Справка о тоннокилометрах',
+				[
+					['Собственные нужды','?t=tnkm_month'],
+					['Сторонние','?t=tnkm_month_enemy']
+				]
+			]
+		]	
+	]
 ];
-var modReports=[
-	['Карточка первичных документов','?t=w_waybill_card'],
-	['Учёт рабочего времени','?t=driver_worktime_month'],
-	['Справка о затратах','?t=costs_month'],
-	['Справка о тоннокилометрах','?t=tnkm_month'],
-	['Справка о тоннокилометрах (сторонние)','?t=tnkm_month_enemy']
-];
-
 
 function refresh(){
 	kind=getParameterByName("t");
@@ -59,11 +69,7 @@ function refresh(){
 	
 		checkAttentions();
 //		document.getElementById('param').innerHTML="<input id='work_date' type='date' value='"+dt.toDbFormat('-')+"' onchange='setDt(this.value); refresh();' />";
-		if (kind=='modReports'){
-			showList(modReports);
-		} else {
-			tryGetData(kind, id, rel);
-		};
+		tryGetData(kind, id, rel);
 	}
 }
 
@@ -214,14 +220,13 @@ function formatTable(o) {
 				break;
 			}
 			case "w_cars": {
-				result +='<div class="nav"> <a href="?t=q_car_norms&m=edit&r=car&id='+o[0].id+'">Нормы</a> </div>'
+				result +='<a href="?t=q_car_norms&m=edit&r=car&id='+id+'" title="Нормы"><img src="img/settings.svg" alt="Нормы"/></a>';
 				if (!(o[0].hasOwnProperty('disp'))) {
 					document.getElementById("mode").innerHTML = "<a href=?t="+kind+">Новый Автомобиль</a>";
 				} else {
 					document.getElementById("mode").innerHTML = "<a href=?t="+kind+">Автомобиль</a>: #"+o[0].disp; 
 				}
 				result += "<div class='input'><table><tbody>";
-				result = result + "<input class='jsobj' name='editdata' id='id' type='hidden' value='"+ o[0].id +"'/>";
 				result = result + "<tr>";
 				result = result + "<th>Наименование</th>";
 				result = result + "<th>Значение</th>";
@@ -572,7 +577,7 @@ function formatTable(o) {
 								result += "<tr class='subtotal'><td colspan=2>итого по "+nvl(old.service_disp,'-')+"</td>";
 								result += "<td>&nbsp;</td>";
 								result += "<td>"+hrefnvl(subtotal[0],"?t=w_waybills&w=service=$$"+o[key].service+"$$ and "+((kind=='tnkm_month_enemy')? '' : 'not' )+ " (workplace_disp=$$Сторонние организации$$)",0, 'Открыть Путевые листы')+"</td>";
-								result += "<td>"+nvl(subtotal[1],'-',0)+"</td>";
+								result += "<td>"+nvl(subtotal[1].toFixed(0),'-',0)+"</td>";
 								result += "</tr>";
 							};
 							old = o[key];
@@ -583,7 +588,7 @@ function formatTable(o) {
 						result += tdCar(o[key].car, o[key].car_disp, "?t="+kind+"&w=car"+formatnull(o[key].car, " is null", "=$$"+o[key].car+"$$"), 'Смотреть все по автомобилю: '+ o[key].car_disp);
 						result = result + "<td>" + nvl(o[key].car_capacity, '-',0) + "</td>";
 						result += "<td>" + hrefnvl(o[key].odometer, "?t=w_waybills&w=car"+formatnull(o[key].car, " is null", "=$$"+o[key].car+"$$")+" and service=$$"+o[key].service+"$$ and "+((kind=='tnkm_month_enemy')? '' : 'not' )+ " (workplace_disp=$$Сторонние организации$$)",0,'Открыть Путевые листы') + "</td>";
-						result = result + "<td>" + nvl(o[key].tnkm, '-',0) + "</td>";
+						result = result + "<td>" + nvl(nvl(o[key].tnkm,0).toFixed(0), '-',0) + "</td>";
 						result = result + "</tr>";
 						total[0] += o[key].odometer;
 						total[1] += o[key].tnkm;
@@ -595,13 +600,13 @@ function formatTable(o) {
 					result += "<tr class='subtotal'><td colspan=2>итого по "+nvl(old.service_disp,'-')+"</td>";
 					result += "<td>&nbsp;</td>";
 					result += "<td>"+hrefnvl(subtotal[0],"?t=w_waybills&w=service=$$"+o[key].service+"$$ and "+((kind=='tnkm_month_enemy')? '' : 'not' )+ " (workplace_disp=$$Сторонние организации$$)",0, 'Открыть Путевые листы')+"</td>";
-					result += "<td>"+nvl(subtotal[1],'-',0)+"</td>";
+					result += "<td>"+nvl(subtotal[1].toFixed(0),'-',0)+"</td>";
 					result += "</tr>";
 				};
 				result += "<tr class='total'><td colspan=2>Итого</td>";
 				result += "<td>&nbsp;</td>";
 				result += "<td>"+hrefnvl(total[0],"?t=w_waybills",0, 'Открыть Путевые листы')+"</td>";
-				result += "<td>"+nvl(total[1],'-',0)+"</td>";
+				result += "<td>"+nvl(total[1].toFixed(0),'-',0)+"</td>";
 				result += "</tr>";
 				result = result + "</table>";
 				result += "<p class='noscreen noeop'>Механик __________________</p>";
@@ -613,7 +618,7 @@ function formatTable(o) {
 				var old = new Object();
 				document.getElementById("mode").innerHTML = "Затраты на выполнение работ";
 				result = "";
-				result += "<p class='noprint'><a href='/r/clm.waybills.third.fods?t=clm.ym&id="+ym+"'>Скачать Справку о затратах ООО УК &quot;Жилищник&quot; на выполнение работ по сторонним организациям</a></p>";
+				result += "<p class='noprint'><a href='/r/clm.waybills.third.fods?t=clm.ym&id="+dt.toDbFormat().substr(0,6)+"'>Скачать Справку о затратах ООО УК &quot;Жилищник&quot; на выполнение работ по сторонним организациям</a></p>";
 				result += '<h2>Справка <br>';
 				result += 'о затратах СЭРМиМ ООО УК &quot;Жилищник&quot; на выполнение работ по подразделениям<br>';
 				result += '<span class="noscreen">за '+dt.toFullMonthFormat()+'</span></h2>'			
