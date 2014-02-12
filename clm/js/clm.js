@@ -52,7 +52,7 @@ function refresh(){
 		};
 
 		if ((kind=='w_waybill_card')) {
-		  order="driver_disp, driver, car_disp, car, dt, num ";
+		  order="driver_disp, driver, car_disp, car, dt, num, odo_b ";
 		};
 
 		if (kind=='costs_month') {
@@ -127,11 +127,6 @@ function tryGetData(url, id, rel){
 	}
 }
 
-
-function saveCopy(){
-	saveData('new');
-}
-
 function tdDriver(id, disp, href, title){
 	var res = "";		
 	if (id == null) {	
@@ -174,34 +169,7 @@ function formatTable(o) {
 	var result = "";
 	var key;
 	var otmp = new Object();
-	
-	function genRow(nm, type, code, list, val){
-		var res;
-		res = "<tr><td class='left'>";		
-		res+="<label for='"+id+code+"'>"+nm+"</label>";
-		res+="</td><td>";
-		if (val === undefined){ 
-			if (o[0][code] === undefined) { o[0][code] = '';};
-			val=o[0][code];
-		};
-		switch(type){
-			case "text":
-			case "date":
-			case "number":
-			{
-				res+="<input for='"+id+"' id='"+id+code+"' type='"+type+"' name='"+code+"' value='"+ val +"'/>";
-				break;
-			}
-			case "list": {
-				res+="<select for='"+id+"' id='"+id+code+"' name='"+code+"'><option value='"+val+"'/>"+ o[0][code+'_disp'] +"</option></select></td></tr>";
-				fillSelect(id+code, list, val);
-				break;
-			}
-		}
-		res+="</td></tr>";
-		return res;
-	};
-	
+
 	if( (mode == "edit") || (mode == "new") ) {
 		if (!(o.hasOwnProperty(0))) {
 			otmp.id="";
@@ -220,21 +188,21 @@ function formatTable(o) {
 				result = result + "<th>Наименование</th>";
 				result = result + "<th>Значение</th>";
 				result = result + "</tr>";
-				result+=genRow("Номер", "text", "num");
-				result+=genRow("Дата", "date", "dt");
-				result+=genRow("Водитель", "list", "driver", "drivers");
-				result+=genRow("Автомобиль", "list", "car", "cars");
-				result+=genRow("Место работы", "list", "workplace", "workplaces");
-				result+=genRow("вид работы", "list", "service", "services");
-				result+=genRow("отработано часов на линии", "number", "hours_work");
-				result+=genRow("часов на ремонте", "number", "hours_repair");
-				result+=genRow("показание спидометра на начало", "number", "odo_b");
-				result+=genRow("показание спидометра на конец", "number", "odo_e");
-				result+=genRow("работа установки", "number", "set_work");
-				result+=genRow("марка топлива", "text", "fuel_mark");
-				result+=genRow("примечание по источнику топлива", "text", "fuel_note");
-				result+=genRow("выдано", "number", "fuel_issued");
-				result+=genRow("фактический расход", "number", "fuel_fact");
+				result+=genRow(o[0], "Номер", "text", "num");
+				result+=genRow(o[0], "Дата", "date", "dt");
+				result+=genRow(o[0], "Водитель", "list", "driver", "drivers");
+				result+=genRow(o[0], "Автомобиль", "list", "car", "cars");
+				result+=genRow(o[0], "Место работы", "list", "workplace", "workplaces");
+				result+=genRow(o[0], "вид работы", "list", "service", "services");
+				result+=genRow(o[0], "отработано часов на линии", "number", "hours_work");
+				result+=genRow(o[0], "часов на ремонте", "number", "hours_repair");
+				result+=genRow(o[0], "показание спидометра на начало", "number", "odo_b");
+				result+=genRow(o[0], "показание спидометра на конец", "number", "odo_e");
+				result+=genRow(o[0], "работа установки", "number", "set_work");
+				result+=genRow(o[0], "марка топлива", "text", "fuel_mark");
+				result+=genRow(o[0], "примечание по источнику топлива", "text", "fuel_note");
+				result+=genRow(o[0], "выдано", "number", "fuel_issued");
+				result+=genRow(o[0], "фактический расход", "number", "fuel_fact");
 				result = result + "</tbody></table>";
 				break;
 			}
@@ -251,7 +219,7 @@ function formatTable(o) {
 				result = result + "<th>Наименование</th>";
 				result = result + "<th>Значение</th>";
 				result = result + "</tr>";
-				result+=genRow("марка автомобиля государственный номер", "text", "disp");
+				result+=genRow(o[0], "марка автомобиля государственный номер", "text", "disp");
 
 				result = result + "</tbody></table>";
 				break;
@@ -291,8 +259,8 @@ function formatTable(o) {
 				result = result + "<th>Наименование</th>";
 				result = result + "<th>Значение</th>";
 				result = result + "</tr>";
-				result+=genRow("Дата начала сезона", "date", "dt");
-				result+=genRow("Сезон", "list", "season", "seasons");
+				result+=genRow(o[0], "Дата начала сезона", "date", "dt");
+				result+=genRow(o[0], "Сезон", "list", "season", "seasons");
 				result = result + "</tbody></table>";
 				break;
 			}
@@ -356,8 +324,8 @@ function formatTable(o) {
 						result = result + "<td class='left'>" + o[key].fuel_note + "</td>";
 						result = result + "<td>" + o[key].fuel_norm +"</td>";
 						result = result + "<td>" + o[key].fuel_issued + "</td>";
-						result = result + "<td>" + ((o[key].fuel_fact)-0).toFixed(0) + "</td>";
-						result = result + "<td>" + ((o[key].fuel_unspent)-0).toFixed(0) + "</td>";
+						result = result + "<td>" + ((o[key].fuel_fact)-0).toFixed(2) + "</td>";
+						result = result + "<td>" + ((o[key].fuel_unspent)-0).toFixed(2) + "</td>";
 						result = result + "</tr>";
 					}
 				}
@@ -383,8 +351,8 @@ function formatTable(o) {
 								result += "<td>&nbsp;</td>";
 								result += "<td>"+nvl(total[2].toFixed(2),'-',0)+"</td>";
 								result += "<td>"+nvl(total[3].toFixed(0),'-',0)+"</td>";
-								result += "<td>"+nvl(total[4].toFixed(0),'-',0)+"</td>";
-								result += "<td>"+nvl(total[5].toFixed(0),'-',0)+"</td>";
+								result += "<td>"+nvl(total[4].toFixed(1),'-',0)+"</td>";
+								result += "<td>"+nvl(total[5].toFixed(1),'-',0)+"</td>";
 								result += "</tr></table>";
 								result += "<p class='noscreen'>Составил: Главный механик, механик __________________</p>";
 								result += "<p class='noscreen'>Принял: ______________ </p>";
@@ -431,15 +399,15 @@ function formatTable(o) {
 						result = result + "<td class='left'>" + o[key].fuel_note + "</td>";
 						result = result + "<td>" + o[key].fuel_norm +"</td>";
 						result = result + "<td>" + nvl(o[key].fuel_issued,'-','0') + "</td>";
-						result = result + "<td>" + ((o[key].fuel_fact)-0).toFixed(0) + "</td>";
-						result = result + "<td>" + ((o[key].fuel_unspent)-0).toFixed(0) + "</td>";
+						result = result + "<td>" + ((o[key].fuel_fact)-0).toFixed(1) + "</td>";
+						result = result + "<td>" + ((o[key].fuel_unspent)-0).toFixed(1) + "</td>";
 						result = result + "</tr>";
 						total[0] += nvl(o[key].odometer,'0','') -0 ;
 						total[1] += nvl(o[key].set_work,'0','')-0;
 						total[2] += nvl(o[key].fuel_norm,'0','')-0;
 						total[3] += nvl(o[key].fuel_issued,'0','')-0;
 						total[4] += nvl(o[key].fuel_fact,'0','')-0;
-						total[5] = nvl(((o[key].fuel_unspent)-0).toFixed(0),'0','')-0;
+						total[5] = nvl(((o[key].fuel_unspent)-0).toFixed(3),'0','')-0;
 					};
 				};
 				if (o[key]) {
@@ -452,8 +420,8 @@ function formatTable(o) {
 					result += "<td>&nbsp;</td>";
 					result += "<td>"+nvl(total[2].toFixed(2),'-',0)+"</td>";
 					result += "<td>"+nvl(total[3].toFixed(0),'-',0)+"</td>";
-					result += "<td>"+nvl(total[4].toFixed(0),'-',0)+"</td>";
-					result += "<td>"+nvl(total[5].toFixed(0),'-',0)+"</td>";
+					result += "<td>"+nvl(total[4].toFixed(1),'-',0)+"</td>";
+					result += "<td>"+nvl(total[5].toFixed(1),'-',0)+"</td>";
 					result += "</tr></table>";
 				};
 				result += "<p class='noscreen'>Составил: Главный механик, механик __________________</p>";
@@ -638,6 +606,7 @@ function formatTable(o) {
 				var total = new Array(0,0,0);
 				var subtotal = new Array(0,0,0);
 				var old = new Object();
+				addClass(document.getElementById('attention'),'noprint');
 				document.getElementById("mode").innerHTML = "Затраты на выполнение работ";
 				result = "";
 				result += "<p class='noprint'><a href='/r/clm.waybills.third.fods?t=clm.ym&id="+dt.toDbFormat().substr(0,6)+"'>Скачать Справку о затратах ООО УК &quot;Жилищник&quot; на выполнение работ по сторонним организациям</a></p>";
@@ -673,7 +642,8 @@ function formatTable(o) {
 						result = result + "<td class='left printsmall'>" + hrefnvl(o[key].workplace_disp,"?t="+kind+"&ym="+ym+"&w=workplace=$$"+o[key].workplace+"$$",0,'Смотреть все по месту работ: '+ o[key].workplace_disp) + "</td>";
 						result = result + "<td class='left printsmall'>" + hrefnvl(o[key].service_disp,"?t="+kind+"&ym="+ym+"&w=service=$$"+o[key].service+"$$",0,'Смотреть все по виду работ: '+ o[key].service_disp) + "</td>";
 						result += tdCar(o[key].car, o[key].car_disp, "?t="+kind+"&ym="+ym+"&w=car=$$"+o[key].car+"$$",'Смотреть все по автомобилю: '+ o[key].car_disp);
-						result = result + "<td>" + hrefnvl(o[key].hours_work, "?t=w_waybills&ym="+ym+"&w=car=$$"+o[key].car+"$$ and service=$$"+o[key].service+"$$ and workplace=$$"+o[key].workplace+"$$",0,'Открыть Путевые листы') + "</td>";
+						result = result + "<td><a href='?t=w_waybills&w=car=$$"+o[key].car+"$$ and service" + formatnull(o[key].service, " is null", "=$$"+o[key].service+"$$")+" and workplace" + formatnull(o[key].workplace, " is null", "=$$"+o[key].workplace+"$$")+"' title='Открыть Путевые листы'>" + nvl(o[key].hours_work,'-',0) + "</a></td>";
+//						result = result + "<td>" + hrefnvl(o[key].hours_work, "?t=w_waybills&ym="+ym+"&w=car=$$"+o[key].car+"$$ and service=$$"+o[key].service+"$$ and workplace=$$"+o[key].workplace+"$$",0,'Открыть Путевые листы') + "</td>";
 						result = result + "<td>" + nvl(o[key].price, '-',0) + "</td>";
 						result = result + "<td>" + nvl(o[key].cost, '-',0) + "</td>";
 						result = result + "<td>" + nvl(o[key].odometer, '-',0) + "</td>";

@@ -22,7 +22,7 @@ function refresh(){
 	  mode=getParameterByName("m");
 	  rel=getParameterByName("r");
 	  order=getParameterByName("o");
-//	  where=getParameterByName("w");
+	  where=getParameterByName("w");
 	  header_table=getParameterByName("h");
 		
 		if (kind=='f_work_plan'){header_table='f_building_work_person'};
@@ -30,7 +30,7 @@ function refresh(){
 		switch (kind){
  			case "f_work_plan":
  			case "work_plan": {
-				where="dt between '"+dt.getFirstMonthDay().toDbFormat()+"' and '"+dt.getLastMonthDay().toDbFormat()+"'";	
+				where = ((where)? where + ' and ' : '') + "dt between '"+dt.getFirstMonthDay().toDbFormat()+"' and '"+dt.getLastMonthDay().toDbFormat()+"'";	
 			}
 		};
 
@@ -92,10 +92,6 @@ function tryDelData(id){
 		var ai = new AJAXInteraction(lurl, refresh);
 		ai.doDelete();
   }
-}
-
-function saveCopy(){
-	saveData('new');
 }
 
 function saveSingleValue(table, el, func){
@@ -182,34 +178,6 @@ function formatTable(o) {
 	var key;
 	var otmp = new Object();
 
-
-	function genRow(nm, type, code, list, val){
-		var res;
-		res = "<tr><td class='left'>";		
-		res+="<label for='"+code+"'>"+nm+"</label>";
-		res+="</td><td>";
-		if (val === undefined){ 
-			if (o[0][code] === undefined) { o[0][code] = '';};
-			val=o[0][code];
-		};
-		switch(type){
-			case "text":
-			case "date":
-			case "number":
-			{
-				res+="<input class='jsobj' id='"+code+"' type='"+type+"' value='"+ val +"'/>";
-				break;
-			}
-			case "list": {
-				res+="<select class='jsobj' id='"+code+"'><option value='"+val+"'/>"+ o[0][code+'_disp'] +"</option></select></td></tr>";
-				fillSelect(code, list, val);
-				break;
-			}
-		}
-		res+="</td></tr>";
-		return res;
-	};
-	
 	if( (mode == "edit") || (mode == "new") ) {
 		if (!(o.hasOwnProperty(0))) {
 			otmp.id="";
@@ -238,12 +206,12 @@ function formatTable(o) {
 						if (o[key].val == null){o[key].val=''};
 						result+= "<tr>";
 						result += tdBuilding(o[key].building,o[key].building_disp);
-						result+= "<td class='left expanded'><label name='code' id='"+o[key].code+"' for='"+o[key].building+o[key].code+"'>"+nvl(o[key].code_disp,o[key].code)+"<br><span class='note full'>"+o[key].code+"</span></label></td>";
+						result+= "<td class='left expanded'><label for='"+o[key].building+o[key].code+"'>"+nvl(o[key].code_disp,o[key].code)+"<br><span class='note full'>"+o[key].code+"</span></label></td>";
 						result+= "<td>"+ nvl(o[key].measure,'&nbsp;') +"</td>";				
 						if(o[key].code.substring(0,3) == 'ds.'){
 							result+= "<td>"+ o[key].val +"</td></tr>";				
 						} else {
-							result+= "<td><label name='building' id='"+o[key].building+"' for='"+o[key].building+o[key].code+"'></label><label name='id' type='hidden' id='"+ o[key].id +"' for='"+o[key].building+o[key].code+"'/><input class='jsobj' name='val' id='"+o[key].building+o[key].code+"' type='number' value='"+ o[key].val +"'/></td></tr>";
+							result+= "<td><label name='building' value='"+o[key].building+"' for='"+o[key].building+o[key].code+"'></label><label name='id' type='hidden' value='"+ o[key].id +"' for='"+o[key].building+o[key].code+"'></label><label name='code' type='hidden' value='"+ o[key].code +"' for='"+o[key].building+o[key].code+"'></label><input class='jsobj' name='val' id='"+o[key].building+o[key].code+"' type='number' value='"+ o[key].val +"'/></td></tr>";
 						};
 
 					};
@@ -255,7 +223,6 @@ function formatTable(o) {
 		if(!(kind.substring(0,2)=="f_")) {
 			result += '<input id="buttonSave" onclick="saveData()" type="button" value="Сохранить" /> ';
 		};
-//		result += '<input onclick="saveCopy()" type="hidden" value="Сохранить как новый" />';
 		result = result + '</div>';
 
 	} else {
@@ -296,33 +263,6 @@ function formatTable(o) {
 					}
 				}
 				result = result + "</table>";
-				break;
-			}
-			case "q_buildings_p": {
-				document.getElementById("mode").innerHTML = "<img src='img/settings.svg' alt='Характеристики' title='Характеристики'/> Характеристики зданий"; 
-				result += "<div class='input'>";
-/*				result += '<input onclick="saveData()" type="button" value="Сохранить" />'; */
-				result += "<table><tbody>";
-				result = result + "<tr>";
-				result = result + "<th>Здание</th>";
-				result = result + "<th>Характеристика</th>";
-				result = result + "<th>Значение</th>";
-				result = result + "</tr>";
-				for (key in o) {
-					if (o.hasOwnProperty(key)) {
-						if (o[key].val == null){o[key].val=''};
-						result+= "<tr>";
-						result += tdBuilding(o[key].building,o[key].building_disp);
-						result+= "<td class='left expanded'><label name='code' id='"+o[key].code+"' for='"+o[key].building+o[key].code+"'>"+nvl(o[key].code_disp,'<без названия>')+"<br><span class='note full'>"+o[key].code+"</span></label></td>";
-						if(o[key].code.substring(0,3) == 'ds.'){
-							result+= "<td>"+ o[key].val +"</td></tr>";				
-						} else {
-							result+= "<td><label name='building' id='"+o[key].building+"' for='"+o[key].building+o[key].code+"'></label><label name='id' type='hidden' id='"+ o[key].id +"' for='"+o[key].building+o[key].code+"'/><input class='jsobj' name='val' id='"+o[key].building+o[key].code+"' type='number' value='"+ o[key].val +"'/></td></tr>";
-						};
-
-					};
-				};
-				result = result + "</tbody></table>";
 				break;
 			}
 			case "f_building_work_person": {
@@ -372,13 +312,13 @@ function formatTable(o) {
 					}
 				}
 				result = result + "<tr id='new_row' style='display:none'>";
-				result = result + "<td><a href='#'><a href='#'><a href='#' onclick='saveData(\"new\")' id='new_accepted'><img src='img/accepted.svg'  alt='Сохранить' title='Сохранить' /></a><a href='#'><img src='img/delete.svg' alt='Удалить' title='Удалить' onclick='getObj(\"show_add\").style.display=\"block\"; getObj(\"new_row\").style.display=\"none\"' /></a></td>";		
+				result = result + "<td><input class='jsobj' id='new_id' name='id' value='' type='hidden'/><a href='#'><a href='#'><a href='#' onclick='saveData(\"new\")' id='new_accepted'><img src='img/accepted.svg'  alt='Сохранить' title='Сохранить' /></a><a href='#'><img src='img/delete.svg' alt='Удалить' title='Удалить' onclick='getObj(\"show_add\").style.display=\"block\"; getObj(\"new_row\").style.display=\"none\"' /></a></td>";		
 				if(getParameterByName("r") == "building"){
-					result += "<td><input class='jsobj hidden' name='"+getParameterByName("id")+"' id='building' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/></td>";
+					result += "<td><input for='new_id' name='building' value='"+getParameterByName("id")+"' type='hidden' autocomplete='OFF' /></td>";
 				} else {
-					result = result + "<td class='left'><input class='jsobj' name='' id='building' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='buildings' id='building_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('building').value=ot=this.options[this.selectedIndex].text; getObj('building').name=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"building_select\").style.visibility = \"hidden\"'> </select> </td>";
+					result = result + "<td class='left'><input for='new_id' id='building' name='building' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='buildings' id='building_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('building').value=ot=this.options[this.selectedIndex].text; getObj('building').name=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"building_select\").style.visibility = \"hidden\"'> </select> </td>";
 				};
-				result = result + "<td class='left'><input class='jsobj' name='' id='contract' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='pers_contracts' id='contract_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('contract').value=ot=this.options[this.selectedIndex].text; getObj('contract').name=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"contract_select\").style.visibility = \"hidden\"'> </select> </td>";
+				result = result + "<td class='left'><input for='new_id' name='contract' id='contract' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='pers_contracts' id='contract_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('contract').value=ot=this.options[this.selectedIndex].text; getObj('contract').name=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"contract_select\").style.visibility = \"hidden\"'> </select> </td>";
 				result = result + "<td class='left'>&nbsp;</td>";
 				result = result + "<td class='left'>&nbsp;</td>";
 				result = result + "</tr>";

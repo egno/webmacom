@@ -83,6 +83,10 @@ function checkSave(o){
 	};
 }
 
+function saveCopy(){
+	saveData('new');
+}
+
 function saveData(fnew){
 	var surl;
 	var o = new Object();
@@ -119,29 +123,29 @@ function saveData(fnew){
 								if (labels[key].htmlFor == elems[i].id && (labels[key].attributes['name']) && (labels[key].attributes['value'])){
 									nm=labels[key].attributes['name'].nodeValue;
 									val=labels[key].attributes['value'].nodeValue;
-									if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+									if (!(nm == 'id' && (!(val) || val == 'null' || val=='' || mode=='new'))) {
 										oel[nm]=val;
 									};
 								};
 							};
 						};
 						for (key in inputs) {
-							if (inputs.hasOwnProperty(key)) {
+							if (inputs.hasOwnProperty(key) && (inputs[key].attributes)) {
 								if ((inputs[key].attributes['for']) && (inputs[key].attributes['for'].nodeValue == elems[i].id) && (inputs[key].attributes['name']) && (inputs[key].attributes['value'])){
 									nm=inputs[key].attributes['name'].nodeValue;
 									val=inputs[key].value;
-									if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+									if (!(nm == 'id' && (!(val) || val == 'null' || val=='' || mode=='new'))) {
 										oel[nm]=val;
 									};
 								};
 							};
 						};
 						for (key in selects) {
-							if (selects.hasOwnProperty(key)) {
+							if (selects.hasOwnProperty(key)  && (inputs[key].attributes)) {
 								if ((selects[key].attributes['for']) && (selects[key].attributes['for'].nodeValue == elems[i].id) && (selects[key].attributes['name'])){
 									nm=selects[key].attributes['name'].nodeValue;
 									val=selects[key].value;
-									if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+									if (!(nm == 'id' && (!(val) || val == 'null' || val=='' || mode=='new'))) {
 										oel[nm]=val;
 									};
 								};
@@ -149,7 +153,7 @@ function saveData(fnew){
 						};
 						nm=elems[i].attributes['name'].nodeValue;
 						val=elems[i].value;
-						if (!(nm == 'id' && (!(val) || val == 'null' || val==''))) {
+						if (!(nm == 'id' && (!(val) || val == 'null' || val=='' || mode=='new'))) {
 							oel[elems[i].attributes['name'].nodeValue]=elems[i].value
 						};
 						o[kind].push(oel);
@@ -173,3 +177,28 @@ function saveData(fnew){
 		};
 	};
 
+	function genRow(r, nm, type, code, list, rid){
+		var res;
+		var val;
+		rid=(rid)?rid:id;
+		res = "<tr><td class='left'>";		
+		res+="<label for='"+rid+code+"'>"+nm+"</label>";
+		res+="</td><td>";
+		val = (r[code]===undefined)?'':r[code];
+		switch(type){
+			case "text":
+			case "date":
+			case "number":
+			{
+				res+="<input for='"+rid+"' id='"+rid+code+"' type='"+type+"' name='"+code+"' value='"+ val +"'/>";
+				break;
+			}
+			case "list": {
+				res+="<select for='"+rid+"' id='"+rid+code+"' name='"+code+"'><option value='"+r[code]+"'/>"+ val +"</option></select></td></tr>";
+				fillSelect(rid+code, list, r[code]);
+				break;
+			}
+		}
+		res+="</td></tr>";
+		return res;
+	};

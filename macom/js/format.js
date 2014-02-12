@@ -14,7 +14,7 @@ return "<a href='"+href+"' "+((title)?"title='"+title+"'":"")+">"+value1+"</a>";
 }
 
 function formatnull(value1, res1, res2){
-	if (value1 == null) {
+	if (value1 === null) {
 		return res1;
  	} else {
 		return res2;

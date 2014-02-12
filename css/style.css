@@ -355,7 +355,7 @@ img {
 }
 
 @media print{
-	.nav, .status, .title, .note, .noprint {
+	.nav, .action, .status, .title, .note, .noprint {
 		display:none;
 	}
 	.noeop{
