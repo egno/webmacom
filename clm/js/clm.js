@@ -366,7 +366,7 @@ function formatTable(o) {
 							result += "<p>Нормы расхода топлива:<br>"+o[key].norm_fuel_disp+": <b>"+nvl(o[key].norm_val,'0')+"</b><br>";
 							result += ""+nvl(o[key].norm_setwork_disp,'')+": <b>"+nvl(o[key].norm_setwork_val,'-')+"</b></p>";
 							result += "<p>Остаток горючего на начало месяца: <b>"+o[key].fuel_unspent_b+"</b></p>";
-							result += "<p>Показание спидометра на начало месяца: <b>"+nvl(o[key].last_odo,'<нет данных>')+"</b></p>";
+							result += "<p>Показание спидометра на начало месяца: <b>"+nvl(o[key].odo_last,'<нет данных>')+"</b></p>";
 							result = result + "<table><tr>";
 							result = result + "<th rowspan='2'>Дата</th>";
 							result = result + "<th rowspan='2'>№ путевого листа</th>";
