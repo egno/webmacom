@@ -52,7 +52,7 @@ function refresh(){
 		};
 
 		if ((kind=='w_waybill_card')) {
-		  order="driver_disp, driver, car_disp, car, dt, num, odo_b ";
+		  order="driver_disp, driver, car_disp, car, dt, odo_b, odo_e, num ";
 		};
 
 		if (kind=='costs_month') {
