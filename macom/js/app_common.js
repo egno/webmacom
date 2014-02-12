@@ -28,9 +28,9 @@ function showMenu() {
 		var res='';
 		for(var i=0; i<arr.length; i++){
 			if (Array.isArray(arr[i][1])) {
-				res += '<li><a href="#">'+arr[i][0]+'</a>'+calcArray(arr[i][1])+'</li>';
+				res += '<li'+((arr[i][2])?' id="'+arr[i][2]+'"':'')+'><a href="#">'+arr[i][0]+'</a>'+calcArray(arr[i][1])+'</li>';
 			} else {
-				res += '<li><a href="'+arr[i][1]+'">'+arr[i][0]+'</a></li>';
+				res += '<li'+((arr[i][2])?' id="'+arr[i][2]+'"':'')+'><a href="'+arr[i][1]+'">'+arr[i][0]+'</a></li>';
 			}
 		};
 		return '<ul class="nav">'+ res+ '</ul>';

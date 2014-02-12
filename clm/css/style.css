@@ -205,6 +205,7 @@ div.title{
   background:#6eb4ee;
   border-color:transparent;
 	color:#000;
+	z-index:100;
 }
 .nav > li:hover > ul {
 	display:block;
@@ -216,6 +217,11 @@ div.title{
 }
 
 .nav li:hover > a{
+	color:black;
+}
+
+.nav li.strong {
+  background:#f88;
 	color:black;
 }
 
