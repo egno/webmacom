@@ -10,7 +10,7 @@ var appNav=
 			['Водители','?t=drivers'],
 		]
 	],
-	['Контроль','?t=alerts'],
+	['Контроль','?t=alerts','nav_check_alarm'],
 	['Отчёты', 
 		[
 			['Карточка первичных документов','?t=w_waybill_card'],
@@ -76,6 +76,7 @@ function refresh(){
 function checkAttentions(){
 	function updateAttention(o) {
 		if(o[0].cnt>0){
+			addClass(getObj('nav_check_alarm'),'strong');
 			document.getElementById('attention').innerHTML = 'Внимание! Исходные данные содержат <a href="?t=alerts&o=table_disp,disp" title="Просмотреть результаты контроля">ошибки</a>. Отчёты могут содержать некорректную информацию.';
 		};
 	};
