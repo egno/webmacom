@@ -10,6 +10,10 @@ var today = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
 
 function init() {
 	kind = getParameterByName("t");
+	if (getParameterByName("ym")) {
+			setDt(getParameterByName("ym") + '01');
+	}
+	;
 	if (kind !== "") {
 		id = getParameterByName("id");
 		mode = getParameterByName("m");

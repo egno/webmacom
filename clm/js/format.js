@@ -1,10 +1,10 @@
 function nvl(value1, value2, value3)
 {
     if ((value3 !== undefined) && (value1 === value3)) {
-        value1 = null;
+        value1 = undefined;
     }
     ;
-    if (value1 === null)
+    if (value1 === undefined || value1 === null)
         return nvl(value2, '');
     return value1;
 }
