@@ -10,21 +10,10 @@ var kind = "";
 var mode = "";
 var order = "2";
 var header_table = "";
-var dt = new Date();
 var ot="", timer=0, x=-1,y=0;
 
 function refresh(){
-	var id ="";
-	var where = "";
-	kind=getParameterByName("t");
 	if ( kind != "") {
-	  id=getParameterByName("id");
-	  mode=getParameterByName("m");
-	  rel=getParameterByName("r");
-	  order=getParameterByName("o");
-	  where=getParameterByName("w");
-	  header_table=getParameterByName("h");
-		
 		if (kind=='f_work_plan'){header_table='f_building_work_person'};
 
 		switch (kind){
@@ -34,7 +23,7 @@ function refresh(){
 			}
 		};
 
-		document.getElementById('param').innerHTML="<input id='work_date' type='date' value='"+dt.toDbFormat('-')+"' onchange='setDt(this.value); refresh();' />";
+		getObj('param').innerHTML="<input id='work_date' type='date' value='"+dt.toDbFormat('-')+"' onchange='setDt(this.value, function() {refresh()});' />";
 		if (header_table==""){
 			tryGetData(kind, id, rel, order, where);
 		} else {
@@ -113,7 +102,7 @@ function saveSingleValue(table, el, func){
 	o[table]=Array(oel);	
 	d=JSON.stringify(o);
 	
-	var ai = new AJAXInteraction('s', func);
+	var ai = new AJAXInteraction('s/', func);
   ai.doPost(d);
 }
 
@@ -314,11 +303,11 @@ function formatTable(o) {
 				result = result + "<tr id='new_row' style='display:none'>";
 				result = result + "<td><input class='jsobj' id='new_id' name='id' value='' type='hidden'/><a href='#'><a href='#'><a href='#' onclick='saveData(\"new\")' id='new_accepted'><img src='img/accepted.svg'  alt='Сохранить' title='Сохранить' /></a><a href='#'><img src='img/delete.svg' alt='Удалить' title='Удалить' onclick='getObj(\"show_add\").style.display=\"block\"; getObj(\"new_row\").style.display=\"none\"' /></a></td>";		
 				if(getParameterByName("r") == "building"){
-					result += "<td><input for='new_id' name='building' value='"+getParameterByName("id")+"' type='hidden' autocomplete='OFF' /></td>";
+					result += "<td><label id='building_id' for='new_id' name='building' value='"+getParameterByName("id")+"' ></label></td>";
 				} else {
-					result = result + "<td class='left'><input for='new_id' id='building' name='building' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='buildings' id='building_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('building').value=ot=this.options[this.selectedIndex].text; getObj('building').name=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"building_select\").style.visibility = \"hidden\"'> </select> </td>";
+					result = result + "<td class='left'><input id='building_id' for='new_id' name='building' type='hidden'/><input id='building' name='building' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='buildings' id='building_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('building').value=ot=this.options[this.selectedIndex].text; getObj('building_id').value=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"building_select\").style.visibility = \"hidden\"'> </select> </td>";
 				};
-				result = result + "<td class='left'><input for='new_id' name='contract' id='contract' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='pers_contracts' id='contract_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('contract').value=ot=this.options[this.selectedIndex].text; getObj('contract').name=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"contract_select\").style.visibility = \"hidden\"'> </select> </td>";
+				result = result + "<td class='left'><input id='contract_id' for='new_id' name='contract'  type='hidden'/><input name='contract' id='contract' type='text' autocomplete='OFF' onkeyup='PressKey(event)' value=''/> <select class='dropdown' name='pers_contracts' id='contract_select' size=5 style='visibility:hidden;position:absolute;z-index:999;' onchange=\"getObj('contract').value=ot=this.options[this.selectedIndex].text; getObj('contract_id').value=ot=this.options[this.selectedIndex].value;\" onkeyup='PressKey2(event)' ondblclick='getObj(\"contract_select\").style.visibility = \"hidden\"'> </select> </td>";
 				result = result + "<td class='left'>&nbsp;</td>";
 				result = result + "<td class='left'>&nbsp;</td>";
 				result = result + "</tr>";
@@ -386,3 +375,76 @@ function formatTable(o) {
 	return result;
 }
 
+
+function obj_work_plan_TableEdit(o){
+	var dayCount = new Date(dt.getFullYear(), dt.getMonth() + 1, 0).getDate();
+	var result="";
+
+	function updateInputValues(o) {
+		var dest;
+		var regex = new RegExp('-', 'gi');
+		try { 
+			for (var key in o) {
+				if (o.hasOwnProperty(key)) {
+					dest=getObj(o[key].dt.replace(regex,'')+o[key].service+o[key].work+o[key].building_staff);
+					dest.value = nvl(o[key].plan_amnt,'');
+					dest["maxValue"] = o[key].calend_hours;
+					dest["workHours"] = o[key].work_hours==null?0:o[key].work_hours;
+					dest.offsetParent.title = "Рабочий день, часов: "+ dest["maxValue"] +"\n"+"Трудозатрат, часов: "+ dest["workHours"] ;
+					if (o[key].calend_hours == 0) {
+						dest.offsetParent.className = "holyday";
+					};
+					if (dest["workHours"] > dest["maxValue"]) {
+						addClass(dest.offsetParent, "alert");
+					};
+				};
+			};
+		}
+		catch(e4){alert("Ошибка доступа к содержимому страницы: \n" + e4.name + ": " + e4.message);};
+		getObj("total"+o[key].dt.replace(regex,'').substring(0,6)+o[key].service+o[key].work+o[key].building_staff).innerHTML=calcObjTotal(o[key].service+o[key].work+o[key].building_staff);
+	};
+
+	result += "<form><table><thead>";
+	result = result + "<tr>";
+	result = result + "<th>Сотрудник</th>";
+	result = result + "<th>Адрес</th>";
+	result = result + "<th>Работа</th>";
+	result = result + "<th>Объём работ</th>";
+	result = result + "<th>Договор</th>";
+	result = result + "<th>План</th>";
+	for (var i = 0; i < dayCount; i) {
+		result = result + "<th>"+ ++i +"<br><span class='note'></span></th>";
+	};
+	result = result + "</tr></thead><tbody>";
+	var old = new Object();
+	for (key in o) {
+		if (o.hasOwnProperty(key)) {
+			result = result + "<tr>";
+			result += tdPerson(o[key].person, o[key].person_disp); 
+			result += tdBuilding(o[key].building,o[key].building_disp);
+			result = result + "<td class='left expanded'><span class='full'>" + o[key].work_disp + "<br><span class='note'>"+ o[key].work_code +"</span></span><span class='main'>" + o[key].work_disp.substring(0,30) + "...</span></td>";
+			result = result + "<td class='left expanded'>"+nvl(o[key].norm_amount,'??')+" чел.-час<br><span class='full'>"+ o[key].base_disp + ': <a href="/?t=q_buildings_p&m=edit&id='+o[key].prop+'">' + o[key].base_val +"</a>&nbsp;"+ o[key].measure +" </span></td>";
+			result = result + "<td>" + nvl(o[key].amount,'-') + "<br><span class='note'>" + o[key].amount_interval + "</span></span></td>";
+			result = result + "<td><div id='total"+dt.toYMFormat()+o[key].service+o[key].work+o[key].building_staff+"' name='dt' value='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+"'>0</div></td>";
+			for (var i = 0; i < dayCount; i++) {
+				if (!(o[key].building_staff==null)) {
+					result += "<td>";
+					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='dt' value='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+"'></label>";
+					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='service' value='"+o[key].service+"'></label>";
+					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='work' value='"+o[key].work+"'></label>";
+					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='building_staff' value='"+o[key].building_staff+"'></label>";
+								result += "<input class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan\", this); getObj(\"total"+dt.toYMFormat()+o[key].service+o[key].work+o[key].building_staff+"\").innerHTML=calcObjTotal(\""+o[key].service+o[key].work+o[key].building_staff+"\");' value=''></td>";
+//					result += "<input class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan\", this );' name='dt' value=''></td>";
+				} else {
+					result += "<td title='Сотрудник не указан'>-</td>";
+				};
+			};
+			result = result + "</tr>";
+			if (!(o[key].building_staff==null)) {
+				makeRequest(purl+"macom.building_work_month_plan('"+dt.toDbFormat()+"'::date,'"+o[key].service+"','"+o[key].work+"','"+o[key].building_staff+"')", function(txt){updateInputValues(txt);})
+			};
+		}
+	}
+	result = result + "</tbody></table></form>";
+	return result;
+}

@@ -55,7 +55,7 @@ function obj_work_plan_TableEdit(o){
 					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='service' value='"+o[key].service+"'></label>";
 					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='work' value='"+o[key].work+"'></label>";
 					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='building_staff' value='"+o[key].building_staff+"'></label>";
-								result += "<input class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan\", this); getObj(\"total"+dt.toYMFormat()+o[key].service+o[key].work+o[key].building_staff+"\").innerHTML=calcObjTotal(\""+o[key].service+o[key].work+o[key].building_staff+"\");' name='dt' value=''></td>";
+								result += "<input class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan\", this); getObj(\"total"+dt.toYMFormat()+o[key].service+o[key].work+o[key].building_staff+"\").innerHTML=calcObjTotal(\""+o[key].service+o[key].work+o[key].building_staff+"\");' value=''></td>";
 //					result += "<input class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan\", this );' name='dt' value=''></td>";
 				} else {
 					result += "<td title='Сотрудник не указан'>-</td>";

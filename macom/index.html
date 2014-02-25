@@ -1,91 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title></title>
-    <link rel="stylesheet" href="css/style.css" />
-	<script src="js/cookie.js"></script>
-	<script src="js/date.js"></script>
-	<script src="js/ajax.js"></script>
-	<script src="js/format.js"></script>
-	<script src="js/tools.js"></script>
-	<script src="js/editdropdown.js"></script>
-	<script src="js/app_common.js"></script>
-	<script src="js/obj_work_plan.js"></script>
-	<script src="js/macom.js"></script>
-	<script src="js/app.js"></script>
-</head>
-<body onload="init();">
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="stylesheet" href="css/style.css" />
+		<link rel="stylesheet" href="css/app.css" />
+		<script src="js/cookie.js"></script>
+		<script src="js/date.js"></script>
+		<script src="js/ajax.js"></script>
+		<script src="js/format.js"></script>
+		<script src="js/tools.js"></script>
+		<script src="js/editdropdown.js"></script>
+		<script src="js/app_common.js"></script>
+		<script src="js/app.js"></script>
+	</head>
+	
+	<body onload="init();">
+		<div class="title">
+			<div id='header' class="header"></div> 
+			<div id="param">&nbsp;</div>
+		</div>
+		<div id="nav" class="nav"></div>
+		<div class="status">
+			<span id="status">&nbsp;</span>
+		</div>
+		<div class="attention">
+			<span id="attention">Для работы приложения требуется разрешить JavaScript</span>
+		</div>
 
-<div class="title">
-	<div id='header' class="header"></div> 
-	<div id="param">&nbsp;</div>
-</div>
-	<div id="nav" class="nav"></div>
- <div class="status">
-  <span id="status">&nbsp;</span>
- </div>
-	 
-    <div id="contentBody">  
-		<h2><a href='http://192.168.0.99'>УК Жилищник</a></h2>
-		<h3 id="app_name"></h3>
-<hr>
-		<p>
-Александр Шелеметьев<br>
-инженер-программист<br><br>
- 
-ООО "УК "Жилищник"<br>
-<a href="http://kem-uk.ru">kem-uk.ru</a><br>
-<a href="http://ук-жилищник.рф">ук-жилищник.рф</a><br>
-<a href="mailto:siteadmin@kem-uk.ru">siteadmin@kem-uk.ru</a><br>
-<a href="mailto:siteadmin@ук-жилищник.рф">siteadmin@ук-жилищник.рф</a><br>
-тел.: 8 (3842) 31-93-04, внутренний: 120<br>
-моб.: +7 (904) 991-5035</p>
-<hr>
-		<h4>Последние изменения</h4>
+		<div id="contentBody">  
+			<h2><a href='http://192.168.0.99'>УК Жилищник</a></h2>
+			<h3 id="app_name"></h3>
+			<hr>
+			<p>
+				Александр Шелеметьев<br>
+				инженер-программист<br><br>
+
+				<a href="http://kem-uk.ru">ООО "УК "Жилищник"</a><br>
+				<a href="http://kem-uk.ru">kem-uk.ru</a><br>
+				<a href="http://ук-жилищник.рф">ук-жилищник.рф</a><br>
+				<a href="mailto:siteadmin@kem-uk.ru">siteadmin@kem-uk.ru</a><br>
+				<a href="mailto:siteadmin@ук-жилищник.рф">siteadmin@ук-жилищник.рф</a><br>
+				тел.: 8 (3842) 31-93-04, внутренний: 120<br>
+				моб.: +7 (904) 991-5035</p>
+			<hr>
+			<h4>Последние изменения</h4>
 			<div id='notes' class="scrollbox"> 
-			<h5>27.01.2014</h5>
-			<ul>
-				<li>Добавлены единицы измерения характеристик здания.
-				<li>Добавлен контроль того, что объём работ может быть выполнен в течение рабочего дня.
-				<li>В производственном задании указывается убираемая площадь (объём работ).
-				<li>В режиме редактирования производственного задания добавлено отображение производственного календаря для сотрудника.
-				<li>Автоматическая загрузка производственных календарей для сотрудников из 1С.
-			</ul>
-			<h5>22.01.2014</h5>
-			<ul>
-				<li>При закреплении персонала за зданием нет необходимости выбирать здание.
-				<li>Исправлена ошибка: Расчётная дата сбрасывается при переходе между страницами
-				<li>При просмотре производственных заданий отображаются только задания текущего месяца
-			</ul>
-			<h5>21.01.2014</h5>
-			<ul>
-				<li>Добавлена печать производственных заданий
-			</ul>
-			<h5>20.01.2014</h5>
-			<ul>
-				<li>Добавлена возможность ввода плана работ (производственных заданий обслуживающему персоналу)
-			</ul>
-			<h5>17.01.2014</h5>
-			<ul>
-				<li>Добавлены скрытые кнопки у здания. Для выбора храктеристик зданий, закреплённого персонала и т.д. нужно навести указатель маши на здание. Кнопки отобразятся.
-				<li>Добавлена возможность редактирования объёма работы (характеристики здания) из описания работы.
-			</ul>
-			<h5>16.01.2014</h5>
-			<ul>
-				<li>Добавлен просмотр работ, выполняемых в соответствии с договором по обслуживанию дома
-			</ul>
-			<h5>14.01.2014</h5>
-			<ul>
-				<li>В окне "Обслуживающий персонал" после сохранения новой записи список персонала обновляется автоматически
-				<li>В окне "Обслуживающий персонал" после выбора значения из списка двойным кликом список прячется
-			</ul>
 			</div>
-    </div>  
-    <div id="debug">  
-		<p></p>
-    </div>  
+		</div>  
+		<div id="debug">  
+			<p></p>
+		</div>  
 
 		<div id="wait">&nbsp;</div>
-  
-</body>
+
+	</body>
 </html>
