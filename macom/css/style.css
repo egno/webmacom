@@ -357,6 +357,34 @@ img {
     background-attachment: local, local, scroll, scroll;
 }
 
+.spinner {
+    display: block;
+    width: 1em;
+    height: 1em;
+    position: relative;
+
+    border: 2px solid rgba(0,0,0,0.5);
+    border-top-color: transparent;
+    border-radius: 100%;
+
+    -webkit-animation: spin 1s infinite linear;
+    -moz-animation: spin 1s infinite linear;
+    animation: spin 1s infinite linear;
+ }
+ 
+
+@-webkit-keyframes spin {
+    to { -webkit-transform: rotate(360deg); }
+}
+
+@-moz-keyframes spin {
+    to { -moz-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
 @media screen{
     .noscreen{
         display:none;

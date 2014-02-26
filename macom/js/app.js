@@ -14,7 +14,7 @@ var ot="", timer=0, x=-1,y=0;
 
 function refresh(){
 	if ( kind != "") {
-		if (kind=='f_work_plan'){header_table='f_building_work_person'};
+		if (kind==='work_plan_month' && mode==='edit'){header_table='building_work_person'};
 
 		switch (kind){
  			case "f_work_plan":
@@ -24,7 +24,7 @@ function refresh(){
 		};
 
 		getObj('param').innerHTML="<input id='work_date' type='date' value='"+dt.toDbFormat('-')+"' onchange='setDt(this.value, function() {refresh()});' />";
-		if (header_table==""){
+		if (header_table===""){
 			tryGetData(kind, id, rel, order, where);
 		} else {
 			tryGetData(header_table, id, rel, order, where);
@@ -132,10 +132,10 @@ function tdBuilding(id, disp, href){
 	}
 	res += "<div class='full'>";
 	res += '<a href="?t=q_buildings_p&m=edit&r=building&id='+id+'&o=code<@\'ds\', code_disp" title="Характеристики объекта обслуживания"><img src="img/settings.svg" alt="Характеристики"/></a>';
-	res += '<a href="?t=f_building_work_person&r=building&id='+id+'&o=service_disp,work_full_disp" title="Услуги и работы по договору обслуживания"><img src="img/worker.svg" alt="Работы"/></a>';
+	res += '<a href="?t=building_work_person&r=building&id='+id+'&o=service_disp,work_full_disp" title="Услуги и работы по договору обслуживания"><img src="img/worker.svg" alt="Работы"/></a>';
 	res += '<a href="?t=i_building_staff&r=building&id='+id+'" title="Закреплённый обслуживающий персонал"><img src="img/personnel.svg" alt="Персонал"/></a>';
-	res += '<a href="?t=f_work_plan&m=edit&r=building&id='+id+'&o=person_disp,building_disp,work_code" title="Производственные задания персоналу на выполение работ"><img src="img/tasks_edit.svg" alt="Задания" /></a>';
-	res += '<a href="?t=work_plan&r=building&id='+id+'&o=person_disp,building_disp,dt,work_code" title="Печать производственных заданий"><img src="img/tasks.svg" alt="Задания" /></a>';
+	res += '<a href="?t=work_plan_month&m=edit&r=building&id='+id+'&o=person_disp,building_disp,work_code" title="Производственные задания персоналу на выполение работ"><img src="img/tasks_edit.svg" alt="Задания" /></a>';
+	res += '<a href="?t=work_plan_month&r=building&id='+id+'&o=person_disp,building_disp,dt,work_code" title="Печать производственных заданий"><img src="img/tasks.svg" alt="Задания" /></a>';
 	res += "</div>";
 	res += "</td>";
 	return res;
@@ -154,8 +154,8 @@ function tdPerson(id, disp, href){
 		}
 		res += "<div class='full'>";
 		res += '<a href="?t=i_building_staff&r=person&id='+id+'" title="Закрепление за объектами"><img src="img/personnel.svg" alt="Персонал"/></a>';
-		res += '<a href="?t=f_work_plan&m=edit&r=person&id='+id+'&o=person_disp,building_disp,dt,work_code" title="Производственные задания сотруднику"><img src="img/tasks_edit.svg" alt="Задания" /></a>';
-	res += '<a href="?t=work_plan&r=person&id='+id+'&o=person_disp,building_disp,dt,work_code" title="Печать производственных заданий"><img src="img/tasks.svg" alt="Задания" /></a>';
+		res += '<a href="?t=work_plan_month&m=edit&r=person&id='+id+'&o=person_disp,building_disp,dt,work_code" title="Производственные задания сотруднику"><img src="img/tasks_edit.svg" alt="Задания" /></a>';
+	res += '<a href="?t=work_plan_month&r=person&id='+id+'&o=person_disp,building_disp,dt,work_code" title="Печать производственных заданий"><img src="img/tasks.svg" alt="Задания" /></a>';
 		res += "</div>";
 		res += "</td>";	
 	};
@@ -173,7 +173,7 @@ function formatTable(o) {
 			o[0]=otmp;
 		};
 		switch (kind) {
-			case "f_work_plan": {
+			case "work_plan_month": {
 			  document.getElementById("mode").innerHTML = "План работ"; 
 				result = showMonthHeader();
 				result += obj_work_plan_TableEdit(o);
@@ -216,7 +216,7 @@ function formatTable(o) {
 
 	} else {
 		switch (kind) {
-			case "work_plan":{
+			case "work_plan_month":{
 			  document.getElementById("mode").innerHTML = "Производственное задание"; 
 				var dayCount = new Date(dt.getFullYear(), dt.getMonth() + 1, 0).getDate();
 				result = showMonthHeader();
@@ -228,7 +228,7 @@ function formatTable(o) {
 								result += "</table><span style='page-break-before:always;'></span>";
 							};
 							old = o[key];
-							result += "<h2><a href='?t=f_work_plan&m=edit&r=building_staff&id="+o[key].building_staff+"&o=service_disp,work_code' title='Изменить задание'>Производственное задание</a></h2><h3><a href='?t=f_work_plan&m=edit&r=building_staff&id="+o[key].building_staff+"&o=service_disp,work_code' title='Изменить задание'>"+o[key].person_disp+"<br>"+o[key].building_disp+"</a></h3>";
+							result += "<h2><a href='?t=work_plan_month&m=edit&r=building_staff&id="+o[key].building_staff+"&o=service_disp,work_code' title='Изменить задание'>Производственное задание</a></h2><h3><a href='?t=work_plan_month&m=edit&r=building_staff&id="+o[key].building_staff+"&o=service_disp,work_code' title='Изменить задание'>"+o[key].person_disp+"<br>"+o[key].building_disp+"</a></h3>";
 							result += "<table>";
 							result = result + "<tr>";
 							result = result + "<th>Дата</th>";
@@ -254,7 +254,7 @@ function formatTable(o) {
 				result = result + "</table>";
 				break;
 			}
-			case "f_building_work_person": {
+			case "building_work_person": {
 			  document.getElementById("mode").innerHTML = "Договор: услуги и работы"; 
 				result = "<table>";
 				result = result + "<tr>";
@@ -388,6 +388,7 @@ function obj_work_plan_TableEdit(o){
 				if (o.hasOwnProperty(key)) {
 					dest=getObj(o[key].dt.replace(regex,'')+o[key].service+o[key].work+o[key].building_staff);
 					dest.value = nvl(o[key].plan_amnt,'');
+					dest.style.display='run-in';
 					dest["maxValue"] = o[key].calend_hours;
 					dest["workHours"] = o[key].work_hours==null?0:o[key].work_hours;
 					dest.offsetParent.title = "Рабочий день, часов: "+ dest["maxValue"] +"\n"+"Трудозатрат, часов: "+ dest["workHours"] ;
@@ -429,19 +430,22 @@ function obj_work_plan_TableEdit(o){
 			for (var i = 0; i < dayCount; i++) {
 				if (!(o[key].building_staff==null)) {
 					result += "<td>";
+//					result += "<div class='spinner'></div>";
 					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='dt' value='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+"'></label>";
 					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='service' value='"+o[key].service+"'></label>";
 					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='work' value='"+o[key].work+"'></label>";
 					result += "<label for='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='building_staff' value='"+o[key].building_staff+"'></label>";
-								result += "<input class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan\", this); getObj(\"total"+dt.toYMFormat()+o[key].service+o[key].work+o[key].building_staff+"\").innerHTML=calcObjTotal(\""+o[key].service+o[key].work+o[key].building_staff+"\");' value=''></td>";
+								result += "<input display='none' class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan_month\", this); getObj(\"total"+dt.toYMFormat()+o[key].service+o[key].work+o[key].building_staff+"\").innerHTML=calcObjTotal(\""+o[key].service+o[key].work+o[key].building_staff+"\");' value=''></td>";
 //					result += "<input class='jsobj' id='"+dt.toYMFormat()+("0"+-~(i)).substr(-2,2)+o[key].service+o[key].work+o[key].building_staff+"' name='amount' autocomplete='OFF' value='' onchange='saveSingleValue(\"work_plan\", this );' name='dt' value=''></td>";
 				} else {
 					result += "<td title='Сотрудник не указан'>-</td>";
 				};
 			};
 			result = result + "</tr>";
-			if (!(o[key].building_staff==null)) {
-				makeRequest(purl+"macom.building_work_month_plan('"+dt.toDbFormat()+"'::date,'"+o[key].service+"','"+o[key].work+"','"+o[key].building_staff+"')", function(txt){updateInputValues(txt);})
+			if (o[key].building_staff!==null) {
+				makeRequest(purl+"building_work_month_plan?w=(service='"+o[key].service+"') and (work='"+o[key].work+"') and (building_staff='"+o[key].building_staff+"')", function(txt){
+						updateInputValues(txt); 
+					})
 			};
 		}
 	}
