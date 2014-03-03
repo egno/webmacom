@@ -179,7 +179,7 @@ function formatTable(o) {
 		}
 		;
 		switch (kind) {
-			case "w_waybills_month":
+			case "w_waybills":
 				{
 					if (mode === 'new') {
 						document.getElementById("mode").innerHTML = "<a href=?t=" + kind + ">Новый Путевой лист</a>";
@@ -319,7 +319,7 @@ function formatTable(o) {
 					for (key in o) {
 						if (o.hasOwnProperty(key)) {
 							result = result + "<tr>";
-							result = result + "<td class='expanded'><a href='?t=" + kind + "&m=edit&id=" + o[key].id + "' title='Редактировать ПЛ №" + o[key].num_disp + "'>" + o[key].num_disp + "</a><div class='full'><a href='?t=" + kind + "&m=edit&id=" + o[key].id + "'><img src='img/edit.svg' alt='Редактировать' title='Редактировать ПЛ №" + o[key].num_disp + "' /></a> <a href='?t=" + kind + "&m=new&id=" + o[key].id + "'><img src='img/copy.svg' alt='Копировать' title='Копировать ПЛ №" + o[key].num_disp + "' /></a> <a href='/r/" + o[key].printform + "?t=clm." + kind + "&id=" + o[key].id + "'><img src='img/ssheet.svg' alt='Печать' title='Печать ПЛ №" + o[key].num_disp + "' /></a></div></td>";
+							result = result + "<td class='expanded'><a href='?t=w_waybills&m=edit&id=" + o[key].id + "' title='Редактировать ПЛ №" + o[key].num_disp + "'>" + o[key].num_disp + "</a><div class='full'><a href='?t=w_waybills&m=edit&id=" + o[key].id + "'><img src='img/edit.svg' alt='Редактировать' title='Редактировать ПЛ №" + o[key].num_disp + "' /></a> <a href='?t=" + kind + "&m=new&id=" + o[key].id + "'><img src='img/copy.svg' alt='Копировать' title='Копировать ПЛ №" + o[key].num_disp + "' /></a> <a href='/r/" + o[key].printform + "?t=clm." + kind + "&id=" + o[key].id + "'><img src='img/ssheet.svg' alt='Печать' title='Печать ПЛ №" + o[key].num_disp + "' /></a></div></td>";
 							result = result + "<td><a href='?t=" + kind + "&r=dt&id=" + o[key].dt + "' title='Смотреть все по дате: " + o[key].dt + "'>" + o[key].dt + "</a></td>";
 							result += tdDriver(o[key].driver, o[key].driver_disp, "?t=" + kind + "&r=driver&id=" + o[key].driver + "' title='Смотреть все по водителю: " + o[key].driver_disp);
 							result += tdCar(o[key].car, o[key].car_disp, "?t=" + kind + "&r=car&id=" + o[key].car, 'Смотреть все по автомобилю: ' + o[key].car_disp);

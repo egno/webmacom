@@ -131,7 +131,8 @@ function tdBuilding(id, disp, href){
 		res += disp;
 	}
 	res += "<div class='full'>";
-	res += '<a href="?t=q_buildings_p&m=edit&r=building&id='+id+'&o=code<@\'ds\', code_disp" title="Характеристики объекта обслуживания"><img src="img/settings.svg" alt="Характеристики"/></a>';
+	res += '<a href="?t=q_buildings_p&m=edit&r=building&id='+id+'&w=not(code<@\'p113\')&o=code<@\'ds\', code_disp, code" title="Характеристики объекта обслуживания"><img src="img/settings.svg" alt="Характеристики"/></a>';
+	res += '<a href="?t=q_buildings_p&m=edit&r=building&id='+id+'&w=code<@\'p113\'&o=code,code_disp" title="Электронный паспорт дома"><img src="img/passport.svg" alt="Электронный паспорт"/></a>';
 	res += '<a href="?t=building_work_person&r=building&id='+id+'&o=service_disp,work_full_disp" title="Услуги и работы по договору обслуживания"><img src="img/worker.svg" alt="Работы"/></a>';
 	res += '<a href="?t=i_building_staff&r=building&id='+id+'" title="Закреплённый обслуживающий персонал"><img src="img/personnel.svg" alt="Персонал"/></a>';
 	res += '<a href="?t=work_plan_month&m=edit&r=building&id='+id+'&o=person_disp,building_disp,work_code" title="Производственные задания персоналу на выполение работ"><img src="img/tasks_edit.svg" alt="Задания" /></a>';
