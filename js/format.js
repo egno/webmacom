@@ -30,6 +30,7 @@ function formatnull(value1, res1, res2) {
 }
 ;
 
+// Разрыв страницы при печати
 function EOP() {
     return "<div style='page-break-before:always;'>&nbsp;<hr class='noprint pagebreak'></div>";
 }

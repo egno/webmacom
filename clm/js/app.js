@@ -1,5 +1,7 @@
+// Наименование приложения			
 var appCaption = "Учёт ГСМ";
-var appNav =
+// Главное меню
+var appNav = 
 				[
 					['На главную', '.'],
 					['Путевые листы', '?t=w_waybills_month'],
@@ -21,19 +23,31 @@ var appNav =
 									['Собственные нужды', '?t=w_tnkm_month'],
 									['Сторонние', '?t=w_tnkm_month_enemy']
 								]
-							]
+							],
+							['Справка об использовании транспорта', '?t=w_car_use_month']
 						]
 					]
 				];
 
 var flViewOnly = false;
 
+// Главная функция				
 function refresh() {
 	if (kind !== "") {
 		switch (kind) {
 			case 'alerts':
 				{
 					order = "table_disp, o";
+					break;
+				}
+			case 'q_car_norms':
+				{
+					order = "car_disp, kind_disp";
+					break;
+				}
+			case 'w_car_use_month':
+				{
+					order = "car_disp";
 					break;
 				}
 			case 'w_costs_month':
@@ -60,6 +74,9 @@ function refresh() {
 			case 'w_waybills_month':
 				{
 					order = "dt, num, odo_b";
+					if (mode==='new' || mode==='edit') {
+						kind = "w_waybills";
+					};
 					break;
 				}
 		}
@@ -70,6 +87,7 @@ function refresh() {
 	}
 }
 
+// Проверка, есть ли ошибки в первичных документах				
 function checkAttentions() {
 	function updateAttention(o) {
 		if (o[0].cnt > 0) {
@@ -83,6 +101,7 @@ function checkAttentions() {
 }
 ;
 
+// Получить данные от сервера
 function tryGetData(url, id, rel) {
 	var lurl;
 	var o = new Object();
@@ -125,6 +144,7 @@ function tryGetData(url, id, rel) {
 	}
 }
 
+// Вывести ячейку таблицы с информацией о водителе
 function tdDriver(id, disp, href, title) {
 	var res = "";
 	if (id === null) {
@@ -145,6 +165,7 @@ function tdDriver(id, disp, href, title) {
 }
 ;
 
+// Вывести ячейку таблицы с информацией об автомобиле
 function tdCar(id, disp, href, title) {
 	var res = "";
 	if (id === null) {
@@ -167,11 +188,13 @@ function tdCar(id, disp, href, title) {
 }
 ;
 
+// Основная функция обработки данных, полученных с сервера 
 function formatTable(o) {
 	var result = "";
 	var key;
 	var otmp = new Object();
 
+	// Режимы редактирования
 	if ((mode === "edit") || (mode === "new")) {
 		if (!(o.hasOwnProperty(0))) {
 			otmp.id = "";
@@ -179,6 +202,7 @@ function formatTable(o) {
 		}
 		;
 		switch (kind) {
+			// Редактирование путевого листа
 			case "w_waybills":
 				{
 					if (mode === 'new') {
@@ -211,6 +235,7 @@ function formatTable(o) {
 					result = result + "</tbody></table>";
 					break;
 				}
+			// Редактирование автомобиля
 			case "w_cars":
 				{
 					result += '<a href="?t=q_car_norms&m=edit&r=car&id=' + id + '" title="Нормы"><img src="img/settings.svg" alt="Нормы"/></a>';
@@ -230,6 +255,7 @@ function formatTable(o) {
 					result = result + "</tbody></table>";
 					break;
 				}
+			// Редактирование норм автомобиля
 			case "q_car_norms":
 				{
 					document.getElementById("mode").innerHTML = "Нормы";
@@ -243,7 +269,7 @@ function formatTable(o) {
 						if (o.hasOwnProperty(key)) {
 							result += "<tr>";
 							result += tdCar(o[key].car, o[key].car_disp, "?t=" + kind + "&m=edit&r=car&id=" + o[key].car);
-							result += "<td class='left'><a href='?t=" + kind + "&m=edit&r=kind&id=" + o[key].kind + "'>" + o[key].kind_disp + "</a></td>";
+							result += "<td class='left'><a href='?t=" + kind + "&m=edit&r=kind&id=" + o[key].kind + "'  title='"+nvl(o[key].note,"")+"'>" + o[key].kind_disp + "</a></td>";
 							result += "<td>";
 							result += "<label type='hidden' name='car' value='" + o[key].car + "' for='" + o[key].car + o[key].kind + "'></label>";
 							result += "<label type='hidden' name='id' value='" + o[key].id + "' for='" + o[key].car + o[key].kind + "'></label>";
@@ -256,6 +282,7 @@ function formatTable(o) {
 					result = result + "</tbody></table>";
 					break;
 				}
+			// Редактирование сезонов
 			case "w_season_dates":
 				{
 					if (!(o[0].hasOwnProperty('dt'))) {
@@ -280,7 +307,68 @@ function formatTable(o) {
 		result += '<input class="action" onclick="saveData()" type="button" value="Сохранить" /> ';
 
 	} else {
+		// Режим просмотра данных
 		switch (kind) {
+			// Просмотр отчёта
+			case "w_car_use_month":
+				{
+					var total = new Array(0, 0, 0, 0, 0, 0);
+					document.getElementById("mode").innerHTML = "Справка об использовании транспорта";
+					result = "";
+					result += '<h2>Справка<br>';
+					result += 'об использовании транспорта<br>';
+					result += '<span class="noscreen">за ' + dt.toFullMonthFormat() + '</span></h2>';
+					result += showMonthHeader();
+					result += "<table>";
+					result = result + "<tr>";
+					result = result + "<th rowspan='2'>наименование единицы транспорта</th>";
+					result = result + "<th rowspan='2'>стоимость часа транспорта</th>";
+					result = result + "<th rowspan='2'>норма времени в месяце</th>";
+					result = result + "<th rowspan='2'>всего отработано согласно табеля учета рабочего времени</th>";
+					result = result + "<th colspan='3'>фактически отработанное количество часов согласно путевых листов</th>";
+					result = result + "<th rowspan='2'>отклонения факта ( &quot;-&quot; автомобиль простаивал                &quot;+&quot; автомобиль переработал)</th>";
+					result = result + "<th rowspan='2'>примечание</th>";
+					result = result + "<th rowspan='2'>Убытки от простоя</th>";
+					result = result + "</tr>";
+					result = result + "<tr>";
+					result = result + "<th>собственные нужды</th>";
+					result = result + "<th>ремонт</th>";
+					result = result + "<th>услуги сторонним организациям</th>";
+					result = result + "</tr>";
+					for (key in o) {
+						if (o.hasOwnProperty(key)) {
+							result = result + "<tr>";
+							result += tdCar(o[key].car, o[key].car_disp);
+							result = result + "<td class='right'>" + hrefnvl(o[key].price,"?t=q_car_norms&m=edit&r=car&id="+o[key].car,0,'Нормы') + "</td>";
+							result = result + "<td class='right'>" + hrefnvl(o[key].norm,"?t=q_car_norms&m=edit&r=car&id="+o[key].car,0,'Нормы\nЧасов в месяце:'+o[key].hours+'\nДней в месяце:'+o[key].days+'\nКоэффициент:'+o[key].time_k) + "</td>";
+							result = result + "<td class='right'>" + hrefnvl(o[key].total_hours, "?t=w_waybills_month&w=car=$$" + o[key].car + "$$ and (hours_total > 0) ", 0, 'Открыть путевые листы') + "</td>";
+							result = result + "<td class='right'>" + hrefnvl(o[key].self_hours, "?t=w_waybills_month&w=car=$$" + o[key].car + "$$ and (hours_work > 0) and not (workplace_disp =$$Сторонние организации$$) and workplace is not null", 0, 'Открыть путевые листы') + "</td>";
+							result = result + "<td class='right'>" + hrefnvl(o[key].hours_repair, "?t=w_waybills_month&w=car=$$" + o[key].car + "$$ and (hours_repair > 0)", 0, 'Открыть путевые листы') + "</td>";
+							result = result + "<td class='right'>" + hrefnvl(o[key].ext_hours, "?t=w_waybills_month&w=car=$$" + o[key].car + "$$ and (hours_work > 0) and workplace_disp =$$Сторонние организации$$", 0, 'Открыть путевые листы') + "</td>";
+							result += "<td class='right'>" + nvl((o[key].total_hours-o[key].norm), "-") + "</td>";
+							result += "<td class='right'><div class='printplain noscreen'></div><textarea class='noprint' rows='1' OnChange='fillPrintTextArea(this);' OnKeyUp='fillPrintTextArea(this);'></textarea></td>";
+							result += "<td class='right'>" + nvl(((o[key].total_hours-o[key].norm)*o[key].price).toFixed(2), "-", "0.00") + "</td>";
+							total[0] += o[key].total_hours;
+							total[1] += o[key].self_hours;
+							total[2] += o[key].hours_repair;
+							total[3] += o[key].ext_hours;
+							total[4] += (o[key].total_hours-o[key].norm);
+							total[5] += (o[key].total_hours-o[key].norm)*o[key].price;
+						}
+					}
+					result += "<tr class='total'><td colspan=3>Итого</td>";
+					result += '<td class="right">' + nvl(total[0], '-', 0) + '</td>';
+					result += '<td class="right">' + nvl(total[1], '-', 0) + '</td>';
+					result += '<td class="right">' + nvl(total[2], '-', 0) + '</td>';
+					result += '<td class="right">' + nvl(total[3], '-', 0) + '</td>';
+					result += '<td class="right">' + nvl(total[4], '-', 0) + '</td>';
+					result += '<td>&nbsp;</td>';
+					result += '<td class="right">' + nvl(total[5].toFixed(2), '-', 0) + '</td>';
+					result += "</tr>";
+					result = result + "</table>";
+					break;
+				}
+			// Просмотр путевых листов
 			case "w_waybills_month":
 				{
 					document.getElementById("mode").innerHTML = "Путевые листы";
@@ -319,7 +407,7 @@ function formatTable(o) {
 					for (key in o) {
 						if (o.hasOwnProperty(key)) {
 							result = result + "<tr>";
-							result = result + "<td class='expanded'><a href='?t=w_waybills&m=edit&id=" + o[key].id + "' title='Редактировать ПЛ №" + o[key].num_disp + "'>" + o[key].num_disp + "</a><div class='full'><a href='?t=w_waybills&m=edit&id=" + o[key].id + "'><img src='img/edit.svg' alt='Редактировать' title='Редактировать ПЛ №" + o[key].num_disp + "' /></a> <a href='?t=" + kind + "&m=new&id=" + o[key].id + "'><img src='img/copy.svg' alt='Копировать' title='Копировать ПЛ №" + o[key].num_disp + "' /></a> <a href='/r/" + o[key].printform + "?t=clm." + kind + "&id=" + o[key].id + "'><img src='img/ssheet.svg' alt='Печать' title='Печать ПЛ №" + o[key].num_disp + "' /></a></div></td>";
+							result = result + "<td id='" + o[key].id + "' class='expanded'><a href='?t=w_waybills&m=edit&id=" + o[key].id + "' title='Редактировать ПЛ №" + o[key].num_disp + "'>" + o[key].num_disp + "</a><div class='full'><a href='?t=w_waybills&m=edit&id=" + o[key].id + "'><img src='img/edit.svg' alt='Редактировать' title='Редактировать ПЛ №" + o[key].num_disp + "' /></a> <a href='?t=" + kind + "&m=new&id=" + o[key].id + "'><img src='img/copy.svg' alt='Копировать' title='Копировать ПЛ №" + o[key].num_disp + "' /></a> <a href='/r/" + o[key].printform + "?t=clm." + kind + "&id=" + o[key].id + "'><img src='img/ssheet.svg' alt='Печать' title='Печать ПЛ №" + o[key].num_disp + "' /></a></div></td>";
 							result = result + "<td><a href='?t=" + kind + "&r=dt&id=" + o[key].dt + "' title='Смотреть все по дате: " + o[key].dt + "'>" + o[key].dt + "</a></td>";
 							result += tdDriver(o[key].driver, o[key].driver_disp, "?t=" + kind + "&r=driver&id=" + o[key].driver + "' title='Смотреть все по водителю: " + o[key].driver_disp);
 							result += tdCar(o[key].car, o[key].car_disp, "?t=" + kind + "&r=car&id=" + o[key].car, 'Смотреть все по автомобилю: ' + o[key].car_disp);
@@ -344,6 +432,7 @@ function formatTable(o) {
 					result = result + "</table>";
 					break;
 				}
+			// Просмотр отчёта
 			case "w_waybill_card_month":
 				{
 					var total = new Array(0, 0, 0, 0, 0, 0);
@@ -450,6 +539,7 @@ function formatTable(o) {
 					result += "<p class='noscreen'>Проверил: ______________ </p>";
 					break;
 				}
+			// Просмотр автомобилей
 			case "w_cars":
 				{
 					document.getElementById("mode").innerHTML = "Автомобили";
@@ -467,6 +557,7 @@ function formatTable(o) {
 					result = result + "</table>";
 					break;
 				}
+			// Просмотр сезонов
 			case "w_season_dates":
 				{
 					document.getElementById("mode").innerHTML = "Приказы о смене сезона";
@@ -486,6 +577,7 @@ function formatTable(o) {
 					result = result + "</table>";
 					break;
 				}
+			// Просмотр водителей
 			case "drivers":
 				{
 					document.getElementById("mode").innerHTML = "Водители";
@@ -505,6 +597,7 @@ function formatTable(o) {
 					result = result + "</table>";
 					break;
 				}
+			// Просмотр отчёта
 			case "w_driver_worktime_month":
 				{
 					var total = new Array(0, 0, 0, 0, 0, 0);
@@ -566,6 +659,7 @@ function formatTable(o) {
 					result += "<p class='noscreen noeop'>Проверил: ______________ </p>";
 					break;
 				}
+			// Просмотр отчёта
 			case "w_tnkm_month":
 			case "w_tnkm_month_enemy":
 				{
@@ -631,6 +725,7 @@ function formatTable(o) {
 					result += "<p class='noscreen noeop'>Механик __________________</p>";
 					break;
 				}
+			// Просмотр отчёта
 			case "w_costs_month":
 				{
 					var total = new Array(0, 0, 0);
@@ -708,6 +803,7 @@ function formatTable(o) {
 					result += "<p class='noscreen'>Начальник ПЭО ______________ Дядченко А.В.</p>";
 					break;
 				}
+			// Просмотр сообщений контроля данных
 			case "alerts":
 				{
 					document.getElementById("mode").innerHTML = "Ошибки";

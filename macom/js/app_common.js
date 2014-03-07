@@ -8,6 +8,7 @@ var id;
 var rel;
 var today = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
 
+// Главная функция
 function init() {
 	kind = getParameterByName("t");
 	if (getParameterByName("ym")) {
@@ -45,6 +46,7 @@ function init() {
 	});
 }
 
+// Отображает главное меню
 function showMenu() {
 
 	function calcArray(arr) {
@@ -63,6 +65,7 @@ function showMenu() {
 	getObj('nav').innerHTML = calcArray(appNav);
 }
 
+// Отображает список изменений в приложении
 function showNotes() {
 	makeRequest('notes.json', function(o) {
 		var res = '';
@@ -90,6 +93,7 @@ function showNotes() {
 	});
 }
 
+// Устанавливает расчётную дату
 function setDt(date, callback) {
 	var code = "work.date";
 	if (date) {
@@ -112,6 +116,7 @@ function setDt(date, callback) {
 		});
 }
 
+// Получает жетон
 function token(callback) {
 	makeRequest(purl, function(o) {
 		if (o[0] && o[0].token) {
@@ -124,6 +129,7 @@ function token(callback) {
 	}, true);
 }
 
+// Показывает сообщение в строке статуса
 function showStatus(txt) {
 	document.getElementById('status').innerHTML = nvl(txt, '&nbsp;', '');
 }
@@ -131,7 +137,8 @@ function showStatus(txt) {
 function showStatusAndRefresh(txt) {
 	showStatus(txt);
 }
-;
+
+// Отображает массив в виде списка
 function showList(m) {
 	var res = '';
 	for (var i = 0; i < m.length; i++) {
@@ -141,6 +148,8 @@ function showList(m) {
 	getObj('contentBody').innerHTML = '<ul>' + res + '</ul>';
 }
 ;
+
+// Запрашивает значение переменной от сервера
 function loadVar(code, callback, errorfunc) {
 	makeRequest(purl + "app.val('" + code + "'::ltree) val", function(o) {
 		if (o[0] && o[0].val) {
@@ -156,10 +165,12 @@ function loadVar(code, callback, errorfunc) {
 	}, true);
 }
 
+// Сохраняет значение переменной на сервере
 function saveVar(code, value, callback) {
 	makeRequest(purl + "app.val('" + code + "'::ltree, '" + value + "'::text)", callback, true);
 }
 
+// Запрашивает данные с сервера
 function getData(o) {
 	var cont = getObj('contentBody');
 	try {
@@ -170,6 +181,7 @@ function getData(o) {
 	}
 }
 
+// Проверяет успешность сохранения данных на сервере
 function checkSave(o) {
 	if (o) {
 		showStatus('Сохранено успешно');
@@ -182,10 +194,12 @@ function checkSave(o) {
 	;
 }
 
+// Сохраняет данные как копию
 function saveCopy() {
 	saveData('new');
 }
 
+// Сохраняет данные на сервер
 function saveData(fnew) {
 	var surl;
 	var o = new Object();
@@ -274,6 +288,15 @@ function saveData(fnew) {
 	}
 }
 
+// Дублирует значение поля ввода в элементе, предназначенном для печати. Нужно для красоты печати полей ввода.
+function fillPrintTextArea(o) {
+	var elems = o.offsetParent.getElementsByClassName('printplain');
+	if (elems[0]) {
+		elems[0].innerHTML=o.value;
+	};
+}
+
+// Отображает заголовок текущего месяца с навигацией по месяцам
 function showMonthHeader() {
 	if ((!rel) && (id)) {
 		return '';
@@ -283,6 +306,8 @@ function showMonthHeader() {
 	;
 }
 ;
+
+// Формирует стандартную строку таблицы
 function genRow(r, nm, type, code, list, rid) {
 	var res;
 	var val;

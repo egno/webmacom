@@ -101,15 +101,17 @@ td.expanded .main{
     transition-delay: 0.5s; 
 }
 
-.expanded:hover .full{
+.expanded:hover .full, .expanded:focus .full{
     z-index: 256;
     opacity: 1; 
 }
 
-.expanded:hover .main{
+.expanded:hover .main, .expanded:focus .main{
     opacity: 0; 
     transition-delay: 0.5s; 
 }
+
+
 
 td.holyday {
     background-color:#eee;
@@ -371,7 +373,10 @@ img {
     -moz-animation: spin 1s infinite linear;
     animation: spin 1s infinite linear;
  }
- 
+
+:target {
+   background: #eeee33;
+};
 
 @-webkit-keyframes spin {
     to { -webkit-transform: rotate(360deg); }
@@ -422,6 +427,9 @@ img {
         color:black;
         text-decoration: none;
     }
+		textarea {
+			display: inline;
+		}
 }
 
 

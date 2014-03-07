@@ -1,3 +1,6 @@
+// Визуальный элемент: Поле с выпадающим списком
+
+// Заполняет список значениями по запросу к БД
 function fillSelect(element_id, query_url, selected_id) {
 
     function formatSelect(o) {
@@ -78,6 +81,7 @@ function pageY(elem) {
             elem.offsetTop;
 }
 
+// Подгрузка значений из БД
 function Load(objname, url) {
     timer = 0;
     o = getObj(objname);

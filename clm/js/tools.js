@@ -1,3 +1,4 @@
+// Добавляет класс к элементу
 function addClass(o, c) {
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g");
     if (re.test(o.className))
@@ -5,11 +6,13 @@ function addClass(o, c) {
     o.className = (o.className + " " + c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 }
 
+// Удаляет класс элемента
 function removeClass(o, c) {
     var re = new RegExp("(^|\\s)" + c + "(\\s|$)", "g");
     o.className = o.className.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 }
 
+// Возвращает параметр из URL
 function getParameterByName(name)
 {
     name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -22,6 +25,7 @@ function getParameterByName(name)
         return decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+// Возвращает элемент по ID
 function getObj(objID) {
     var o = new Object;
     if (document.getElementById) {
