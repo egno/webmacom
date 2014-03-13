@@ -663,10 +663,10 @@ function formatTable(o) {
 			case "w_tnkm_month":
 			case "w_tnkm_month_enemy":
 				{
-					var total = new Array(0, 0);
-					var subtotal = new Array(0, 0);
+					var total = new Array(0, 0,0);
+					var subtotal = new Array(0, 0,0);
 					var old = new Object();
-					document.getElementById("mode").innerHTML = "Тонно-километры " + ((kind === 'w_tnkm_month_enemy') ? '(сторонние организации)' : 'собственные нужды');
+					document.getElementById("mode").innerHTML = "Грузооборот " + ((kind === 'w_tnkm_month_enemy') ? '(сторонние организации)' : 'собственные нужды');
 					result = "";
 					result += '<h2>Справка <br>';
 					result += 'о тонно-километрах ' + ((kind === 'w_tnkm_month_enemy') ? '(сторонние организации)' : 'собственные нужды') + '<br>';
@@ -678,7 +678,8 @@ function formatTable(o) {
 					result = result + "<th>транспорт</th>";
 					result = result + "<th>грузоподъемность</th>";
 					result = result + "<th>пробег, км</th>";
-					result = result + "<th>тонно-км</th>";
+					result = result + "<th>Грузооборот, тн-км</th>";
+					result = result + "<th>Перевезено грузов, тн</th>";
 					result = result + "</tr>";
 					for (key in o) {
 						if (o.hasOwnProperty(key)) {
@@ -688,31 +689,36 @@ function formatTable(o) {
 									result += "<td>&nbsp;</td>";
 									result += "<td>" + hrefnvl(subtotal[0], "?t=w_waybills_month&w=service=$$" + o[key].service + "$$ and " + ((kind === 'w_tnkm_month_enemy') ? '' : 'not') + " (workplace_disp=$$Сторонние организации$$)", 0, 'Открыть Путевые листы') + "</td>";
 									result += "<td>" + nvl(subtotal[1].toFixed(0), '-', 0) + "</td>";
+									result += "<td>" + nvl(subtotal[2].toFixed(0), '-', 0) + "</td>";
 									result += "</tr>";
 								}
 								;
 								old = o[key];
-								subtotal = [0, 0];
+								subtotal = [0, 0, 0];
 							}
 							;
 							result = result + "<tr>";
 							result = result + "<td class='left printsmall'>" + hrefnvl(o[key].service_disp, "?t=" + kind + "&w=service=$$" + o[key].service + "$$", 0, 'Смотреть все по виду работ: ' + o[key].service_disp) + "</td>";
 							result += tdCar(o[key].car, o[key].car_disp, "?t=" + kind + "&w=car" + formatnull(o[key].car, " is null", "=$$" + o[key].car + "$$"), 'Смотреть все по автомобилю: ' + o[key].car_disp);
 							result = result + "<td>" + nvl(o[key].car_capacity, '-', 0) + "</td>";
-							result += "<td>" + hrefnvl(o[key].odometer, "?t=w_waybills_month&w=car" + formatnull(o[key].car, " is null", "=$$" + o[key].car + "$$") + " and service=$$" + o[key].service + "$$ and " + ((kind === 'w_tnkm_month_enemy') ? '' : 'not') + " (workplace_disp=$$Сторонние организации$$)", 0, 'Открыть Путевые листы') + "</td>";
-							result = result + "<td>" + nvl(nvl(o[key].tnkm, 0).toFixed(0), '-', 0) + "</td>";
+							result += "<td>" + hrefnvl(o[key].odometer, "?t=w_waybills_month&w=car" + formatnull(o[key].car, " is null", "=$$" + o[key].car + "$$") + " and service" + formatnull(o[key].service, " is null", "=$$" + o[key].service + "$$")+" and " + ((kind === 'w_tnkm_month_enemy') ? '' : 'not') + " (workplace_disp=$$Сторонние организации$$)", 0, 'Открыть Путевые листы') + "</td>";
+							result = result + "<td title='"+o[key].car_capacity+" * "+o[key].koef+" * "+o[key].odometer+" = "+(o[key].car_capacity * o[key].koef * o[key].odometer).toFixed(3) +"'>" + nvl(nvl(o[key].tnkm, 0).toFixed(0), '-', 0) + "</td>";
+							result = result + "<td title='"+o[key].car_capacity+" * "+o[key].koef+" * "+o[key].odometer+" / "+o[key].days+" = "+(o[key].car_capacity * o[key].koef * o[key].odometer / o[key].days).toFixed(3) +"'>" + nvl((nvl(o[key].tnkm, 0) / o[key].days).toFixed(0), '-', 0) + "</td>";
 							result = result + "</tr>";
 							total[0] += o[key].odometer;
 							total[1] += o[key].tnkm;
+							total[2] += (o[key].tnkm / o[key].days);
 							subtotal[0] += o[key].odometer;
 							subtotal[1] += o[key].tnkm;
+							subtotal[2] += (o[key].tnkm / o[key].days);
 						}
 					}
-					if ((o) && (o[key]) && (o[key].service)) {
+					if ((o) && (o[key]) ) {
 						result += "<tr class='subtotal'><td colspan=2>итого по " + nvl(old.service_disp, '-') + "</td>";
 						result += "<td>&nbsp;</td>";
-						result += "<td>" + hrefnvl(subtotal[0], "?t=w_waybills_month&w=service=$$" + o[key].service + "$$ and " + ((kind === 'w_tnkm_month_enemy') ? '' : 'not') + " (workplace_disp=$$Сторонние организации$$)", 0, 'Открыть Путевые листы') + "</td>";
+						result += "<td>" + hrefnvl(subtotal[0], "?t=w_waybills_month&w=service" + formatnull(o[key].service, " is null", "=$$" + o[key].service + "$$")+" and " + ((kind === 'w_tnkm_month_enemy') ? '' : 'not') + " (workplace_disp=$$Сторонние организации$$)", 0, 'Открыть Путевые листы') + "</td>";
 						result += "<td>" + nvl(subtotal[1].toFixed(0), '-', 0) + "</td>";
+						result += "<td>" + nvl(subtotal[2].toFixed(0), '-', 0) + "</td>";
 						result += "</tr>";
 					}
 					;
@@ -720,6 +726,7 @@ function formatTable(o) {
 					result += "<td>&nbsp;</td>";
 					result += "<td>" + hrefnvl(total[0], "?t=w_waybills_month", 0, 'Открыть Путевые листы') + "</td>";
 					result += "<td>" + nvl(total[1].toFixed(0), '-', 0) + "</td>";
+					result += "<td>" + nvl(total[2].toFixed(0), '-', 0) + "</td>";
 					result += "</tr>";
 					result = result + "</table>";
 					result += "<p class='noscreen noeop'>Механик __________________</p>";
